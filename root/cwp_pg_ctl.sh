@@ -73,6 +73,78 @@ case $ACTION in
     pgadmin_restart)
         systemctl restart pgadmin4
         ;;
+    get_pgadmin_port)
+        P=$(grep -E '^[[:space:]]*DEFAULT_SERVER_PORT[[:space:]]*=' /etc/pgadmin/config_system.py 2>/dev/null | awk -F'=' '{print $2}' | tr -d ' "')
+        if [ -z "$P" ]; then
+            P="5050"
+        fi
+        echo "$P"
+        ;;
+    set_pgadmin_port)
+        NEW_PORT=$ARG1
+        if [[ ! "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt 65535 ]; then
+            echo "ERROR: Invalid port number"
+            exit 1
+        fi
+        sed -i -E "s/DEFAULT_SERVER_PORT[[:space:]]*=[[:space:]]*[0-9]+/DEFAULT_SERVER_PORT = $NEW_PORT/" /etc/pgadmin/config_system.py 2>/dev/null || true
+        sed -i -E "s/('0.0.0.0',[[:space:]]*)[0-9]+/\1$NEW_PORT/" /usr/pgadmin4/run_pgadmin.py 2>/dev/null || true
+        iptables -I INPUT -p tcp --dport "$NEW_PORT" -j ACCEPT 2>/dev/null || true
+        if which firewall-cmd >/dev/null 2>&1 && systemctl is-active firewalld >/dev/null 2>&1; then
+            firewall-cmd --add-port="${NEW_PORT}/tcp" --permanent 2>/dev/null || true
+            firewall-cmd --reload 2>/dev/null || true
+        fi
+        if [ -f /etc/csf/csf.conf ]; then
+            if ! grep -E "^TCP_IN = .*${NEW_PORT}" /etc/csf/csf.conf >/dev/null 2>&1; then
+                sed -i -E "s/(TCP_IN = \"[^\"]*)/\1,${NEW_PORT}/" /etc/csf/csf.conf 2>/dev/null || true
+                csf -r 2>/dev/null || true
+            fi
+        fi
+        systemctl restart pgadmin4 2>/dev/null || true
+        echo "SUCCESS"
+        ;;
+    get_pgadmin_user)
+        /usr/pgadmin4/venv/bin/python3 -c "
+import sys
+sys.path.insert(0, '/usr/pgadmin4/web')
+from pgAdmin4 import app
+from pgadmin.model import User
+with app.app_context():
+    u = User.query.first()
+    if u:
+        print(u.username or u.email or 'root')
+    else:
+        print('root')
+" 2>/dev/null || echo "root"
+        ;;
+    set_pgadmin_user)
+        NEW_USER=$ARG1
+        if [ -z "$NEW_USER" ]; then
+            echo "ERROR: Empty username"
+            exit 1
+        fi
+        MAIL_UTIL=$(find /usr/pgadmin4/venv -name 'mail_util.py' 2>/dev/null | head -n 1)
+        if [ -n "$MAIL_UTIL" ] && [ -f "$MAIL_UTIL" ]; then
+            sed -i "s/if email in \[\"root\", \"admin\"\]:/if email in [\"root\", \"admin\", \"$NEW_USER\"]:/g" "$MAIL_UTIL" 2>/dev/null || true
+        fi
+        /usr/pgadmin4/venv/bin/python3 -c "
+import sys
+sys.path.insert(0, '/usr/pgadmin4/web')
+from pgAdmin4 import app
+from pgadmin.model import User, db
+with app.app_context():
+    u = User.query.first()
+    if u:
+        u.email = '$NEW_USER'
+        u.username = '$NEW_USER'
+        db.session.commit()
+        print('SUCCESS')
+    else:
+        print('NO_USER')
+"
+        ;;
+    get_pgadmin_version)
+        rpm -q --queryformat '%{VERSION}' pgadmin4-web 2>/dev/null || echo "4"
+        ;;
     change_pgadmin_pwd)
         NEW_PWD=$ARG1
         /usr/pgadmin4/venv/bin/python3 -c "
@@ -82,7 +154,7 @@ from pgAdmin4 import app
 from pgadmin.model import User, db
 from flask_security.utils import hash_password
 with app.app_context():
-    u = User.query.filter_by(username='root').first() or User.query.filter_by(email='root').first() or User.query.filter_by(email='root@cwp.local').first()
+    u = User.query.first()
     if u:
         u.password = hash_password('$NEW_PWD')
         db.session.commit()

@@ -140,6 +140,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = "Please enter a valid port number between 1 and 65535.";
                 $msg_type = "danger";
             }
+        } elseif ($action === 'set_pgadmin_port') {
+            $new_pa_port = (int) preg_replace('/[^0-9]/', '', $_POST['new_pgadmin_port'] ?? '5050');
+            if ($new_pa_port >= 1 && $new_pa_port <= 65535) {
+                shell_exec("$ctl set_pgadmin_port " . escapeshellarg($new_pa_port) . " 2>&1");
+                $message = "pgAdmin port updated to <b>" . htmlspecialchars($new_pa_port) . "</b> and service restarted.";
+                $msg_type = "success";
+            } else {
+                $message = "Please enter a valid port number between 1 and 65535.";
+                $msg_type = "danger";
+            }
+        } elseif ($action === 'set_pgadmin_user') {
+            $new_pa_user = trim($_POST['new_pgadmin_user'] ?? '');
+            if (!empty($new_pa_user)) {
+                $res = trim(shell_exec("$ctl set_pgadmin_user " . escapeshellarg($new_pa_user) . " 2>&1") ?? '');
+                if (strpos($res, 'SUCCESS') !== false) {
+                    $message = "pgAdmin username updated to <b>" . htmlspecialchars($new_pa_user) . "</b>.";
+                    $msg_type = "success";
+                } else {
+                    $message = "Failed to update pgAdmin username.";
+                    $msg_type = "danger";
+                }
+            } else {
+                $message = "Username cannot be empty.";
+                $msg_type = "danger";
+            }
         } elseif ($action === 'change_user_pwd') {
             $username = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['username'] ?? '');
             $password = $_POST['new_password'] ?? '';
@@ -170,6 +195,10 @@ $pg_version_raw = trim(shell_exec("$ctl get_version 2>/dev/null") ?? '17.11');
 $pg_port_raw = trim(shell_exec("$ctl get_port 2>/dev/null") ?? '5432');
 $pg_conf_path = trim(shell_exec("$ctl get_conf_path 2>/dev/null") ?? '/var/lib/pgsql/17/data/postgresql.conf');
 $current_config_content = ($tab === 'config') ? shell_exec("$ctl get_conf 2>/dev/null") ?? '' : '';
+
+$pgadmin_port_raw = trim(shell_exec("$ctl get_pgadmin_port 2>/dev/null") ?? '5050');
+$pgadmin_user_raw = trim(shell_exec("$ctl get_pgadmin_user 2>/dev/null") ?? 'root');
+$pgadmin_version_raw = trim(shell_exec("$ctl get_pgadmin_version 2>/dev/null") ?? '4');
 
 // Fetch Statuses
 $pg_status = trim(shell_exec("$ctl status 2>/dev/null") ?? 'inactive');
@@ -440,11 +469,19 @@ if (!empty($user_raw)) {
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Databases:</td>
-                        <td><b><?php echo count($databases); ?></b> Databases</td>
+                        <td>
+                            <a href="index.php?module=postgresql-pgadmin&tab=databases" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all databases">
+                                <b><?php echo count($databases); ?></b> Databases
+                            </a>
+                        </td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Users:</td>
-                        <td><b><?php echo count($users); ?></b> Users</td>
+                        <td>
+                            <a href="index.php?module=postgresql-pgadmin&tab=users" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all database users">
+                                <b><?php echo count($users); ?></b> Users
+                            </a>
+                        </td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Version:</td>
@@ -481,7 +518,7 @@ if (!empty($user_raw)) {
                     <?php if ($is_pgadmin_active): ?>
                         <?php
                         $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
-                        $pgadmin_url = "http://{$pgadmin_host}:5050/";
+                        $pgadmin_url = "http://{$pgadmin_host}:" . htmlspecialchars($pgadmin_port_raw) . "/";
                         ?>
                         <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; text-decoration:none; border-radius:4px; display:inline-flex; align-items:center; gap:6px;">
                             <i class="icon16 icomoon-icon-new-tab" style="color:#ffffff !important;"></i> Open pgAdmin
@@ -509,18 +546,50 @@ if (!empty($user_raw)) {
                 </div>
             </div>
 
-            <!-- Change pgAdmin Password Form -->
-            <div style="background:#f8f9fa; border:1px solid #e4e7ed; border-radius:5px; padding:15px; margin-top:5px;">
-                <div style="font-size:12px; font-weight:bold; color:#495057; margin-bottom:10px;">
-                    <i class="icon16 icomoon-icon-key" style="color:#2f80ed; margin-right:5px;"></i> pgAdmin username: <code>root@cwp.local</code> | Change Password:
-                </div>
-                <form method="POST" style="display:flex; gap:10px; margin:0;">
-                    <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="Enter new password" required style="height:34px; font-size:12px; border:1px solid #ced4da; border-radius:4px; flex:1;">
-                    <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 16px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
-                        Save
-                    </button>
-                </form>
-            </div>
+            <!-- pgAdmin Info & Settings Table -->
+            <table class="pdns-table">
+                <tbody>
+                    <tr>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px;">Port:</td>
+                        <td>
+                            <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing pgAdmin port requires restarting pgAdmin service. Continue?');">
+                                <input type="hidden" name="action" value="set_pgadmin_port">
+                                <input type="number" name="new_pgadmin_port" min="1" max="65535" value="<?php echo htmlspecialchars($pgadmin_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
+                                    <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; background:#f9fbfd;">Username:</td>
+                        <td>
+                            <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
+                                <input type="hidden" name="action" value="set_pgadmin_user">
+                                <input type="text" name="new_pgadmin_user" value="<?php echo htmlspecialchars($pgadmin_user_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and update username">
+                                    <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; background:#f9fbfd;">Change password:</td>
+                        <td>
+                            <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
+                                <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="New password" required style="width:170px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;">
+                                <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Update password">
+                                    <i class="icon16 icomoon-icon-key" style="color:#ffffff !important;"></i> Save
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; background:#f9fbfd;">Version:</td>
+                        <td><code><?php echo htmlspecialchars($pgadmin_version_raw); ?></code></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
