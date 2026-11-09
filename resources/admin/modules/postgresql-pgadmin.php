@@ -1,9 +1,9 @@
 <?php
 /**
  * PostgreSQL 17 & pgAdmin 4 Management Module for Control Web Panel (CWP)
- * Styled identically to CWP PowerDNS Manager (?module=powerdns&)
+ * Styled identically to CWP PowerDNS Manager (?module=powerdns-manager)
  * Author: Qadir Adamson
- * Module Name: postgresql_pgadmin
+ * Module Name: postgresql-pgadmin
  * Language: English
  */
 
@@ -257,54 +257,6 @@ if (!empty($user_raw)) {
 .btn-action-delete i, .btn-action-delete span {
     color: #ffffff !important;
 }
-.btn-bind-sync {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    height: 32px !important;
-    padding: 0 16px !important;
-    background-color: #007bff !important;
-    background: #007bff !important;
-    color: #ffffff !important;
-    border: 1px solid #0069d9 !important;
-    border-radius: 4px !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    text-decoration: none !important;
-    cursor: pointer !important;
-    line-height: 1 !important;
-}
-.btn-bind-sync:hover {
-    background-color: #0069d9 !important;
-    background: #0069d9 !important;
-    color: #ffffff !important;
-}
-.btn-bind-sync i, .btn-bind-sync span {
-    color: #ffffff !important;
-}
-.stat-box {
-    background: #f8f9fa;
-    border: 1px solid #e4e7ed;
-    border-radius: 6px;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: #ffffff !important;
-}
-.stat-icon i, .stat-icon span {
-    color: #ffffff !important;
-}
-
 
 /* Force Tab Styles to be visible and isolated */
 .cwp-pg-tabs {

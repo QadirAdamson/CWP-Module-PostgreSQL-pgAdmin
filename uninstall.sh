@@ -24,6 +24,7 @@ fi
 # 1. Remove CWP module and menu files
 echo -e "\n${YELLOW}[1/4] Removing CWP Admin modules and menus...${NC}"
 rm -f /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql-pgadmin.php
+rm -f /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql_pgadmin.php
 rm -f /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql_manager.php
 rm -f /usr/local/cwpsrv/htdocs/resources/admin/include/pg_menu.php
 sed -i '/pg_menu.php/d' /usr/local/cwpsrv/htdocs/resources/admin/include/3rdparty.php 2>/dev/null || true

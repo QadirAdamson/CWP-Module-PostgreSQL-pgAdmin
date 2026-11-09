@@ -21,7 +21,7 @@ A native PostgreSQL & pgAdmin 4 (Web Mode) management module designed for [Contr
 Run on your CWP server as `root`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/QadirAdamson/CWP_Module-PostgreSQL_pgAdmin/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin/main/install.sh | bash
 ```
 
 Access in CWP Admin Panel: 👉 **SQL Services → PostgreSQL / pgAdmin**
@@ -31,7 +31,7 @@ Access in CWP Admin Panel: 👉 **SQL Services → PostgreSQL / pgAdmin**
 ## 🗑️ Uninstallation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/QadirAdamson/CWP_Module-PostgreSQL_pgAdmin/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin/main/uninstall.sh | bash
 ```
 
 ---

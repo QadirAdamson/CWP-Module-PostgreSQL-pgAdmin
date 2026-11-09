@@ -191,18 +191,24 @@ systemctl reload cwpsrv
 
 # 6. Deploy CWP Module & Controller Script
 echo -e "\n${YELLOW}[6/6] Installing CWP Admin Module and Menu...${NC}"
-cp -f "$SCRIPT_DIR/root/cwp_pg_ctl.sh" /usr/local/bin/cwp_pg_ctl.sh
+REPO_RAW="https://raw.githubusercontent.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin/main"
+if [ -f "$SCRIPT_DIR/root/cwp_pg_ctl.sh" ]; then
+    cp -f "$SCRIPT_DIR/root/cwp_pg_ctl.sh" /usr/local/bin/cwp_pg_ctl.sh
+    cp -f "$SCRIPT_DIR/resources/admin/modules/postgresql-pgadmin.php" /usr/local/cwpsrv/htdocs/resources/admin/modules/
+    cp -f "$SCRIPT_DIR/resources/admin/include/pg_menu.php" /usr/local/cwpsrv/htdocs/resources/admin/include/
+else
+    curl -fsSL "$REPO_RAW/root/cwp_pg_ctl.sh" -o /usr/local/bin/cwp_pg_ctl.sh
+    curl -fsSL "$REPO_RAW/resources/admin/modules/postgresql-pgadmin.php" -o /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql-pgadmin.php
+    curl -fsSL "$REPO_RAW/resources/admin/include/pg_menu.php" -o /usr/local/cwpsrv/htdocs/resources/admin/include/pg_menu.php
+fi
 chmod +x /usr/local/bin/cwp_pg_ctl.sh
+chmod 644 /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql-pgadmin.php /usr/local/cwpsrv/htdocs/resources/admin/include/pg_menu.php
 
 # Sudoers permission for cwpsrv
 cat << 'SUDO' > /etc/sudoers.d/cwpsrv_pg
 cwpsrv ALL=(ALL) NOPASSWD: /usr/local/bin/cwp_pg_ctl.sh
 SUDO
 chmod 440 /etc/sudoers.d/cwpsrv_pg
-
-# Copy PHP module and sidebar menu hook
-cp -f "$SCRIPT_DIR/resources/admin/modules/postgresql-pgadmin.php" /usr/local/cwpsrv/htdocs/resources/admin/modules/
-cp -f "$SCRIPT_DIR/resources/admin/include/pg_menu.php" /usr/local/cwpsrv/htdocs/resources/admin/include/
 
 # Include menu into 3rdparty.php if not already present
 if ! grep -q "pg_menu.php" /usr/local/cwpsrv/htdocs/resources/admin/include/3rdparty.php 2>/dev/null; then
