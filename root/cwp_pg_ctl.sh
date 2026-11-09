@@ -251,7 +251,14 @@ JSONEOF
             echo "ERROR: Invalid database name"
             exit 1
         fi
-        su - postgres -c "createdb -p $PG_PORT \"$DBNAME\""
+        OUT=$(su - postgres -c "createdb -p $PG_PORT \"$DBNAME\"" 2>&1)
+        STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            echo "SUCCESS"
+        else
+            echo "ERROR: $OUT"
+            exit 1
+        fi
         ;;
     drop_db)
         DBNAME=$ARG1
@@ -259,7 +266,14 @@ JSONEOF
             echo "ERROR: Invalid database name"
             exit 1
         fi
-        su - postgres -c "dropdb -p $PG_PORT \"$DBNAME\""
+        OUT=$(su - postgres -c "dropdb -p $PG_PORT \"$DBNAME\"" 2>&1)
+        STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            echo "SUCCESS"
+        else
+            echo "ERROR: $OUT"
+            exit 1
+        fi
         ;;
     create_user)
         USERNAME=$ARG1
@@ -269,9 +283,17 @@ JSONEOF
             exit 1
         fi
         ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
-        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 CREATE USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
 SQLEOF
+)
+        STATUS=$?
+        if [ $STATUS -eq 0 ] && ! echo "$OUT" | grep -qi "error"; then
+            echo "SUCCESS"
+        else
+            echo "ERROR: $OUT"
+            exit 1
+        fi
         ;;
     change_user_pwd)
         USERNAME=$ARG1
@@ -281,9 +303,17 @@ SQLEOF
             exit 1
         fi
         ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
-        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 ALTER USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
 SQLEOF
+)
+        STATUS=$?
+        if [ $STATUS -eq 0 ] && ! echo "$OUT" | grep -qi "error"; then
+            echo "SUCCESS"
+        else
+            echo "ERROR: $OUT"
+            exit 1
+        fi
         ;;
     drop_user)
         USERNAME=$ARG1
@@ -291,9 +321,17 @@ SQLEOF
             echo "ERROR: Invalid username"
             exit 1
         fi
-        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 DROP USER "$USERNAME";
 SQLEOF
+)
+        STATUS=$?
+        if [ $STATUS -eq 0 ] && ! echo "$OUT" | grep -qi "error"; then
+            echo "SUCCESS"
+        else
+            echo "ERROR: $OUT"
+            exit 1
+        fi
         ;;
     get_conf_path)
         echo "$CONF"

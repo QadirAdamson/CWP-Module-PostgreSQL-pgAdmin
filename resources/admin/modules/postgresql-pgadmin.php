@@ -102,9 +102,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         if ($action === 'create_db') {
             $dbname = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['dbname'] ?? '');
             if (!empty($dbname)) {
-                shell_exec("$ctl create_db " . escapeshellarg($dbname) . " 2>&1");
-                $message = "Database <b>" . htmlspecialchars($dbname) . "</b> created successfully.";
-                $msg_type = "success";
+                $out = trim(shell_exec("$ctl create_db " . escapeshellarg($dbname) . " 2>&1") ?? '');
+                if (strpos($out, 'SUCCESS') !== false) {
+                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> created successfully.";
+                    $msg_type = "success";
+                } else {
+                    $message = "Failed to create database <b>" . htmlspecialchars($dbname) . "</b>.";
+                    $msg_type = "danger";
+                }
             } else {
                 $message = "Invalid database name. Please use alphanumeric characters and underscores.";
                 $msg_type = "danger";
@@ -112,9 +117,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         } elseif ($action === 'drop_db') {
             $dbname = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['dbname'] ?? '');
             if (!empty($dbname) && $dbname !== 'postgres') {
-                shell_exec("$ctl drop_db " . escapeshellarg($dbname) . " 2>&1");
-                $message = "Database <b>" . htmlspecialchars($dbname) . "</b> has been dropped.";
-                $msg_type = "success";
+                $out = trim(shell_exec("$ctl drop_db " . escapeshellarg($dbname) . " 2>&1") ?? '');
+                $db_check = trim(shell_exec("$ctl list_dbs 2>/dev/null") ?? '');
+                $still_exists = false;
+                if (!empty($db_check)) {
+                    foreach (explode("\n", $db_check) as $line) {
+                        $parts = explode('|', trim($line));
+                        if (($parts[0] ?? '') === $dbname) { $still_exists = true; break; }
+                    }
+                }
+                if ($still_exists || strpos($out, 'SUCCESS') === false || stripos($out, 'ERROR') !== false) {
+                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> silinemedi, pgadmin ile silin.";
+                    $msg_type = "danger";
+                } else {
+                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> has been dropped.";
+                    $msg_type = "success";
+                }
             } else {
                 $message = "The default 'postgres' system database cannot be dropped.";
                 $msg_type = "danger";
@@ -123,9 +141,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $username = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['username'] ?? '');
             $password = $_POST['password'] ?? '';
             if (!empty($username) && !empty($password)) {
-                shell_exec("$ctl create_user " . escapeshellarg($username) . " " . escapeshellarg($password) . " 2>&1");
-                $message = "User <b>" . htmlspecialchars($username) . "</b> created successfully.";
-                $msg_type = "success";
+                $out = trim(shell_exec("$ctl create_user " . escapeshellarg($username) . " " . escapeshellarg($password) . " 2>&1") ?? '');
+                if (strpos($out, 'SUCCESS') !== false) {
+                    $message = "User <b>" . htmlspecialchars($username) . "</b> created successfully.";
+                    $msg_type = "success";
+                } else {
+                    $message = "Failed to create user <b>" . htmlspecialchars($username) . "</b>.";
+                    $msg_type = "danger";
+                }
             } else {
                 $message = "Please provide both username and password.";
                 $msg_type = "danger";
@@ -169,9 +192,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $username = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['username'] ?? '');
             $password = $_POST['new_password'] ?? '';
             if (!empty($username) && !empty($password)) {
-                shell_exec("$ctl change_user_pwd " . escapeshellarg($username) . " " . escapeshellarg($password) . " 2>&1");
-                $message = "Password for user <b>" . htmlspecialchars($username) . "</b> updated successfully.";
-                $msg_type = "success";
+                $out = trim(shell_exec("$ctl change_user_pwd " . escapeshellarg($username) . " " . escapeshellarg($password) . " 2>&1") ?? '');
+                if (strpos($out, 'SUCCESS') !== false) {
+                    $message = "Password for user <b>" . htmlspecialchars($username) . "</b> updated successfully.";
+                    $msg_type = "success";
+                } else {
+                    $message = "Failed to update password for user <b>" . htmlspecialchars($username) . "</b>.";
+                    $msg_type = "danger";
+                }
             } else {
                 $message = "Please provide a valid username and password.";
                 $msg_type = "danger";
@@ -179,9 +207,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         } elseif ($action === 'drop_user') {
             $username = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['username'] ?? '');
             if (!empty($username) && $username !== 'postgres') {
-                shell_exec("$ctl drop_user " . escapeshellarg($username) . " 2>&1");
-                $message = "User <b>" . htmlspecialchars($username) . "</b> removed.";
-                $msg_type = "success";
+                $out = trim(shell_exec("$ctl drop_user " . escapeshellarg($username) . " 2>&1") ?? '');
+                $usr_check = trim(shell_exec("$ctl list_users 2>/dev/null") ?? '');
+                $still_exists = false;
+                if (!empty($usr_check)) {
+                    foreach (explode("\n", $usr_check) as $line) {
+                        $parts = explode('|', trim($line));
+                        if (($parts[0] ?? '') === $username) { $still_exists = true; break; }
+                    }
+                }
+                if ($still_exists || strpos($out, 'SUCCESS') === false || stripos($out, 'ERROR') !== false) {
+                    $message = "User <b>" . htmlspecialchars($username) . "</b> silinemedi, pgadmin ile silin.";
+                    $msg_type = "danger";
+                } else {
+                    $message = "User <b>" . htmlspecialchars($username) . "</b> removed.";
+                    $msg_type = "success";
+                }
             } else {
                 $message = "The master 'postgres' user cannot be removed.";
                 $msg_type = "danger";
