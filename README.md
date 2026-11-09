@@ -4,26 +4,15 @@ A high-performance, native PostgreSQL & pgAdmin 4 (Web Mode) management module d
 
 ---
 
-## 📸 Screenshots
-
-### PostgreSQL & pgAdmin Overview
-![PostgreSQL & pgAdmin Overview](docs/screenshots/postgresql_overview.png)
-
-### Databases Management & Drop Verification
-![PostgreSQL Databases Management](docs/screenshots/postgresql_databases.png)
-
----
-
 ## ✨ Key Features
 
-- **🐘 Multi-Version PostgreSQL Support**: Interactive LTS version selector during installation (PostgreSQL 14, 15, 16, 17, 18).
-- **🗄️ Dedicated Database & User Tabs**: Create, inspect, and drop PostgreSQL databases with real-time disk sizes and encodings; manage database users with superuser indicators and inline password updates.
-- **🖥️ Standalone pgAdmin 4 Web (Port 5050)**: Native service deployment with automatic local PostgreSQL server discovery and registration.
-- **⚡ Ultra-Fast Sub-Second Page Loads**: High-speed metadata retrieval engine querying native configurations and SQLite in microseconds without heavy framework overhead.
-- **⚙️ In-Browser Configuration Editor**: Full-featured editor for `postgresql.conf` with automatic timestamped backups, syntax validation, and instant service restart.
-- **🔄 Service Controls**: Quick command-only service actions (`Start`, `Restart`, `Stop`) with live status badges.
-- **🌐 Dynamic Port Switching**: Modify both PostgreSQL (default: 5432) and pgAdmin 4 (default: 5050) ports with automated firewall (CSF / firewalld / iptables) updates and server sync.
-- **🎨 Unified Modern CWP UI**: Form actions in standard CWP blue (`#2f80ed`), delete actions in grey (`#6c757d`), and clean left-aligned data tables.
+- **Multi-Version PostgreSQL**: Install and manage PostgreSQL 14, 15, 16, 17, or 18 via LTS installer selector.
+- **Database Management**: Create, inspect, and drop databases with live disk size and encoding statistics.
+- **User Management**: Manage roles, grant superuser privileges, update passwords, and delete users safely.
+- **pgAdmin 4 Web Deployment**: Native pgAdmin 4 service on port 5050 with automatic server discovery.
+- **Service Controls**: Start, stop, and restart PostgreSQL and pgAdmin 4 services directly from the panel.
+- **Dynamic Port Configuration**: Update PostgreSQL (default: 5432) and pgAdmin 4 (default: 5050) ports with automated firewall sync.
+- **Configuration Editor**: In-browser `postgresql.conf` editor with automated backups and service restart.
 
 ---
 
