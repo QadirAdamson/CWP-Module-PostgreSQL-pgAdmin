@@ -17,7 +17,7 @@ $message = "";
 $msg_type = "success";
 
 $tab = isset($_GET['tab']) ? trim($_GET['tab']) : 'overview';
-$allowed_tabs = ['overview', 'databases', 'users'];
+$allowed_tabs = ['overview', 'databases', 'users', 'config'];
 if (!in_array($tab, $allowed_tabs)) {
     $tab = 'overview';
 }
@@ -63,6 +63,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             $message = "Please enter a valid password.";
+            $msg_type = "danger";
+        }
+    } elseif (isset($_POST['save_config'])) {
+        $new_config = $_POST['config_content'] ?? '';
+        if (!empty($new_config)) {
+            $tmp_file = tempnam('/tmp', 'pg_conf_');
+            file_put_contents($tmp_file, $new_config);
+            $res = trim(shell_exec("$ctl save_conf " . escapeshellarg($tmp_file) . " 2>&1") ?? '');
+            if (strpos($res, 'SUCCESS') !== false) {
+                $message = "Configuration file saved successfully.";
+                $msg_type = "success";
+                if (isset($_POST['restart_after_save'])) {
+                    shell_exec("$ctl restart 2>&1");
+                    usleep(400000);
+                    $new_st = trim(shell_exec("$ctl status 2>/dev/null") ?? '');
+                    if ($new_st === 'active') {
+                        $message .= " PostgreSQL service restarted successfully.";
+                    } else {
+                        $message .= " However, PostgreSQL failed to restart. Please check configuration syntax.";
+                        $msg_type = "danger";
+                    }
+                }
+            } else {
+                $message = "Error saving configuration file.";
+                $msg_type = "danger";
+            }
+        } else {
+            $message = "Configuration content cannot be empty.";
             $msg_type = "danger";
         }
     } elseif (isset($_POST['action'])) {
@@ -136,6 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch Version
 $pg_version_raw = trim(shell_exec("$ctl get_version 2>/dev/null") ?? '17.11');
 $pg_port_raw = trim(shell_exec("$ctl get_port 2>/dev/null") ?? '5432');
+$pg_conf_path = trim(shell_exec("$ctl get_conf_path 2>/dev/null") ?? '/var/lib/pgsql/17/data/postgresql.conf');
+$current_config_content = ($tab === 'config') ? shell_exec("$ctl get_conf 2>/dev/null") ?? '' : '';
 
 // Fetch Statuses
 $pg_status = trim(shell_exec("$ctl status 2>/dev/null") ?? 'inactive');
@@ -401,11 +431,11 @@ if (!empty($user_raw)) {
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Databases:</td>
-                        <td><code><?php echo count($databases); ?> Databases</code></td>
+                        <td><b><?php echo count($databases); ?></b> Databases</td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Users:</td>
-                        <td><code><?php echo count($users); ?> Users</code></td>
+                        <td><b><?php echo count($users); ?></b> Users</td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd;">Version:</td>
@@ -634,6 +664,42 @@ if (!empty($user_raw)) {
                 }
             }
             </script>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<?php elseif ($tab === 'config'): ?>
+<!-- PostgreSQL Configuration File Editor Card -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="pdns-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center;">
+                    <h4 style="margin:0; font-size:16px;">
+                        <i class="icon16 icomoon-icon-cogs" style="color:#007bff; margin-right:5px;"></i>
+                        <b>PostgreSQL Configuration File (<code><?php echo htmlspecialchars($pg_conf_path); ?></code>)</b>
+                    </h4>
+                </div>
+                <div>
+                    <span class="badge" style="background:#6c757d; color:#fff; padding:6px 10px; font-size:12px; border-radius:4px; font-weight:500;">
+                        Auto-backups on save
+                    </span>
+                </div>
+            </div>
+
+            <form method="POST">
+                <div class="form-group" style="margin-bottom:15px;">
+                    <textarea name="config_content" id="pg_config_textarea" class="form-control" rows="22" style="font-family:Consolas, Monaco, monospace; font-size:13px; width:100%; padding:12px; box-sizing:border-box; background:#1e1e1e; color:#d4d4d4; border:1px solid #333; border-radius:4px; line-height:1.5; min-height:480px; resize:vertical;"><?php echo htmlspecialchars($current_config_content); ?></textarea>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:12px; border-top:1px solid #eee;">
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:normal; margin:0;">
+                        <input type="checkbox" name="restart_after_save" value="1" checked> <span style="margin: 10px 0 0 -10px">Restart PostgreSQL after changes</span>
+                    </label>
+                    <button type="submit" name="save_config" class="btn btn-primary" style="background:#007bff !important; background-color:#007bff !important; color:#ffffff !important; border:none; padding:8px 22px; font-weight:bold; font-size:13px; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="icon16 icomoon-icon-disk" style="color:#fff;"></i> Save Configuration
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -8,7 +8,7 @@ A native PostgreSQL & pgAdmin 4 (Web Mode) management module designed for [Contr
 
 - **🐘 PostgreSQL Server Support**: Interactive LTS version selector during installation (PostgreSQL 14, 15, 16, 17, 18).
 - **🖥️ pgAdmin 4 Web Integration**: Reverse-proxied natively through CWP's `cwpsrv` Nginx engine (`/pgadmin/`) with system `root` authentication.
-- **⚙️ Dynamic Port Management**: In-browser configuration and instant service reload for custom PostgreSQL ports.
+- **⚙️ Dynamic Port & Config Management**: In-browser configuration editor for `postgresql.conf` with automatic timestamped backups, instant service restart option, and custom PostgreSQL port switcher.
 - **🗄️ Database Management**: Create, list disk sizes & encodings, and drop databases directly from the GUI.
 - **👥 User Management**: Add users with passwords, view superuser privileges, inline password update drawers, and remove accounts.
 - **🔄 Service Controls & Updates**: Real-time service status, quick service restarts, and one-click in-place pgAdmin package updates.

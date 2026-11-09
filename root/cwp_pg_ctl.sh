@@ -124,6 +124,29 @@ with app.app_context():
         USERNAME=$ARG1
         su - postgres -c "psql -p $PG_PORT -c \"DROP USER \\\"$USERNAME\\\" ;\""
         ;;
+    get_conf_path)
+        echo "$CONF"
+        ;;
+    get_conf)
+        if [ -f "$CONF" ]; then
+            cat "$CONF"
+        fi
+        ;;
+    save_conf)
+        # Reads new configuration from stdin or tmp file
+        TMP_CONF="$ARG1"
+        if [ -f "$TMP_CONF" ] && [ -f "$CONF" ]; then
+            cp -f "$CONF" "${CONF}.bak_$(date +%Y%m%d_%H%M%S)"
+            cp -f "$TMP_CONF" "$CONF"
+            chown postgres:postgres "$CONF" 2>/dev/null || true
+            chmod 600 "$CONF" 2>/dev/null || true
+            rm -f "$TMP_CONF"
+            echo "SUCCESS"
+        else
+            echo "ERROR"
+            exit 1
+        fi
+        ;;
     *)
         echo "Unknown action: $ACTION"
         exit 1
