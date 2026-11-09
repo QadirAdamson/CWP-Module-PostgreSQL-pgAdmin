@@ -408,17 +408,17 @@ if (!empty($user_raw)) {
 <!-- Tabs Navigation -->
 <ul class="cwp-pg-tabs nav nav-tabs">
     <li>
-        <a href="index.php?module=postgresql_pgadmin&tab=overview" class="<?php echo ($tab==='overview') ? 'active-tab' : 'inactive-tab'; ?>">
+        <a href="index.php?module=postgresql-pgadmin&tab=overview" class="<?php echo ($tab==='overview') ? 'active-tab' : 'inactive-tab'; ?>">
             <i class="icon16 icomoon-icon-dashboard"></i> <span>Overview</span>
         </a>
     </li>
     <li>
-        <a href="index.php?module=postgresql_pgadmin&tab=databases" class="<?php echo ($tab==='databases') ? 'active-tab' : 'inactive-tab'; ?>">
+        <a href="index.php?module=postgresql-pgadmin&tab=databases" class="<?php echo ($tab==='databases') ? 'active-tab' : 'inactive-tab'; ?>">
             <i class="icon16 icomoon-icon-database"></i> <span>Databases (<?php echo count($databases); ?>)</span>
         </a>
     </li>
     <li>
-        <a href="index.php?module=postgresql_pgadmin&tab=users" class="<?php echo ($tab==='users') ? 'active-tab' : 'inactive-tab'; ?>">
+        <a href="index.php?module=postgresql-pgadmin&tab=users" class="<?php echo ($tab==='users') ? 'active-tab' : 'inactive-tab'; ?>">
             <i class="icon16 icomoon-icon-users"></i> <span>Users (<?php echo count($users); ?>)</span>
         </a>
     </li>

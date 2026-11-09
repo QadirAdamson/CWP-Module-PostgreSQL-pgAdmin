@@ -201,7 +201,7 @@ SUDO
 chmod 440 /etc/sudoers.d/cwpsrv_pg
 
 # Copy PHP module and sidebar menu hook
-cp -f "$SCRIPT_DIR/resources/admin/modules/postgresql_pgadmin.php" /usr/local/cwpsrv/htdocs/resources/admin/modules/
+cp -f "$SCRIPT_DIR/resources/admin/modules/postgresql-pgadmin.php" /usr/local/cwpsrv/htdocs/resources/admin/modules/
 cp -f "$SCRIPT_DIR/resources/admin/include/pg_menu.php" /usr/local/cwpsrv/htdocs/resources/admin/include/
 
 # Include menu into 3rdparty.php if not already present
@@ -212,6 +212,6 @@ fi
 echo -e "\n${GREEN}==============================================================================${NC}"
 echo -e "${GREEN}  Installation completed successfully! (PostgreSQL ${PG_VER} & pgAdmin 4)      ${NC}"
 echo -e "${GREEN}  - CWP Module: CWP Admin -> SQL Services -> PostgreSQL / pgAdmin             ${NC}"
-echo -e "${GREEN}  - Direct Link: https://YOUR_SERVER_IP:2031/admin/index.php?module=postgresql_pgadmin${NC}"
+echo -e "${GREEN}  - Direct Link: https://YOUR_SERVER_IP:2031/admin/index.php?module=postgresql-pgadmin${NC}"
 echo -e "${GREEN}  - pgAdmin 4 Web: http://YOUR_SERVER_IP:2030/pgadmin/                        ${NC}"
 echo -e "${GREEN}==============================================================================${NC}"

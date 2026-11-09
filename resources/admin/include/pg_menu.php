@@ -4,7 +4,7 @@ $(document).ready(function() {
     $("#mn-pgmanager-sub").remove();
 
     var pgSubItem = '<li id="mn-pgmanager-sub">'
-        + '<a href="index.php?module=postgresql_pgadmin" style="font-weight:bold; color:#336791;">'
+        + '<a href="index.php?module=postgresql-pgadmin" style="font-weight:bold; color:#336791;">'
         + '<span class="icon16 icomoon-icon-database" style="color: #336791 !important; margin-right: 5px;"></span>'
         + '<span class="txt">PostgreSQL / pgAdmin</span>'
         + '</a>'
@@ -31,7 +31,7 @@ $(document).ready(function() {
     }
 
     // 3. Highlight and keep SQL Services menu expanded when on postgresql_pgadmin module
-    if (window.location.search.indexOf('module=postgresql_pgadmin') !== -1 || window.location.href.indexOf('module=postgresql_pgadmin') !== -1) {
+    if (window.location.search.indexOf('module=postgresql-pgadmin') !== -1 || window.location.href.indexOf('module=postgresql-pgadmin') !== -1) {
         if ($sqlSub && $sqlSub.length) {
             $sqlSub.addClass("show").css("display", "block");
         }
