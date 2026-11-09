@@ -574,7 +574,7 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Change password:</td>
+                        <td style="font-weight:bold; background:#f9fbfd;">Password:</td>
                         <td>
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="New password" required style="width:170px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;">
