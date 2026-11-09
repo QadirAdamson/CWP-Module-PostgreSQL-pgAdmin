@@ -4,6 +4,16 @@ A high-performance, native PostgreSQL & pgAdmin 4 (Web Mode) management module d
 
 ---
 
+## 📸 Screenshots
+
+### PostgreSQL & pgAdmin Overview
+![PostgreSQL & pgAdmin Overview](docs/screenshots/postgresql_overview.png)
+
+### Databases Management & Drop Verification
+![PostgreSQL Databases Management](docs/screenshots/postgresql_databases.png)
+
+---
+
 ## ✨ Key Features
 
 - **🐘 Multi-Version PostgreSQL Support**: Interactive LTS version selector during installation (PostgreSQL 14, 15, 16, 17, 18).
