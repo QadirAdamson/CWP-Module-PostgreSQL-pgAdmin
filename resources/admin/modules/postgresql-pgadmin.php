@@ -369,7 +369,7 @@ if ($is_active) {
     color: #ffffff !important;
 }
 
-/* Force Tab Styles to be visible and isolated */
+
 .cwp-pg-tabs {
     display: flex !important;
     list-style: none !important;
@@ -414,7 +414,7 @@ if ($is_active) {
     color: #000000 !important;
 }
 
-/* Ensure all icons on colored buttons and badges are explicitly white */
+
 .btn-primary i, .btn-primary span,
 .btn-danger i, .btn-danger span,
 .btn-warning i, .btn-warning span,
@@ -424,7 +424,6 @@ if ($is_active) {
 }
 </style>
 
-<!-- Top Title & Service Controls -->
 <div class="row" style="margin-bottom:20px;">
     <div class="col-md-12">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:0 2px;">
@@ -468,7 +467,6 @@ if ($is_active) {
 </div>
 <?php endif; ?>
 
-<!-- Tabs Navigation -->
 <ul class="cwp-pg-tabs nav nav-tabs">
     <li>
         <a href="index.php?module=postgresql-pgadmin&tab=overview" class="<?php echo ($tab==='overview') ? 'active-tab' : 'inactive-tab'; ?>">
@@ -492,10 +490,8 @@ if ($is_active) {
     </li>
 </ul>
 
-<!-- TAB: OVERVIEW -->
 <?php if ($tab === 'overview'): ?>
 <div class="row">
-    <!-- Left Column: PostgreSQL Info -->
     <div class="col-md-5">
         <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
             <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px;">
@@ -543,7 +539,6 @@ if ($is_active) {
         </div>
     </div>
 
-    <!-- Right Column: pgAdmin -->
     <div class="col-md-7">
         <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
             <?php
@@ -568,7 +563,6 @@ if ($is_active) {
                     </div>
                 </div>
 
-                <!-- Service Controls: Restart / Stop / Start -->
                 <div style="display:flex; gap:6px; align-items:center;">
                     <?php if ($is_pgadmin_active): ?>
                         <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
@@ -590,7 +584,6 @@ if ($is_active) {
             </div>
             <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
 
-            <!-- pgAdmin Info & Settings Table -->
             <table class="pdns-table" style="margin:0;">
                 <tbody>
                     <tr>
@@ -642,7 +635,6 @@ if ($is_active) {
 </div>
 <?php endif; ?>
 
-<!-- TAB: DATABASES -->
 <?php if ($tab === 'databases'): ?>
 <div class="row">
     <div class="col-md-12">
@@ -653,7 +645,6 @@ if ($is_active) {
                 </h4>
             </div>
 
-            <!-- Create DB inline form -->
             <form method="POST" style="margin-bottom:20px; display:flex; gap:10px; align-items:center;">
                 <input type="hidden" name="action" value="create_db">
                 <input type="text" name="dbname" class="form-control" placeholder="Enter database name" required pattern="[a-zA-Z0-9_]+" style="max-width:380px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
@@ -707,7 +698,6 @@ if ($is_active) {
 </div>
 <?php endif; ?>
 
-<!-- TAB: USERS -->
 <?php if ($tab === 'users'): ?>
 <div class="row">
     <div class="col-md-12">
@@ -718,7 +708,6 @@ if ($is_active) {
                 </h4>
             </div>
 
-            <!-- Create User inline form -->
             <form method="POST" style="margin-bottom:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <input type="hidden" name="action" value="create_user">
                 <input type="text" name="username" class="form-control" placeholder="Enter username" required pattern="[a-zA-Z0-9_]+" style="max-width:240px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
@@ -771,7 +760,6 @@ if ($is_active) {
                                     </div>
                                 </td>
                             </tr>
-                            <!-- Change Password Inline Drawer Row -->
                             <tr id="pwd-row-<?php echo $idx; ?>" style="display:none; background:#f4f6f9;">
                                 <td colspan="3" style="padding:12px 18px; border-top:1px dashed #dcdfe6;">
                                     <form method="POST" style="display:flex; align-items:center; gap:10px; margin:0; flex-wrap:wrap;">
@@ -806,9 +794,7 @@ if ($is_active) {
     </div>
 </div>
 <?php endif; ?>
-<!-- TAB: SETTINGS / CONFIG -->
 <?php if ($tab === 'config'): ?>
-<!-- PostgreSQL Configuration File Editor Card -->
 <div class="row">
     <div class="col-md-12">
         <div class="pdns-card">
