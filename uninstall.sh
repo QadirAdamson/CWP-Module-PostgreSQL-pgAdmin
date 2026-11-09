@@ -27,10 +27,16 @@ rm -f /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql-pgadmin.php
 rm -f /usr/local/cwpsrv/htdocs/resources/admin/include/pg_menu.php
 sed -i '/pg_menu.php/d' /usr/local/cwpsrv/htdocs/resources/admin/include/3rdparty.php 2>/dev/null || true
 
+# Only remove postgresql_manager.php if it is our compatibility alias (never delete CWP original files)
+if grep -q "postgresql-pgadmin.php" /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql_manager.php 2>/dev/null; then
+    rm -f /usr/local/cwpsrv/htdocs/resources/admin/modules/postgresql_manager.php
+fi
+
 # 2. Remove sudoers and helper scripts
 echo -e "\n${YELLOW}[2/4] Removing helper scripts & permissions...${NC}"
 rm -f /usr/local/bin/cwp_pg_ctl.sh
 rm -f /etc/sudoers.d/cwpsrv_pg
+rm -f /etc/cwp_active_pg_version
 
 # 3. Stop & disable pgadmin4 service
 echo -e "\n${YELLOW}[3/4] Stopping and removing pgAdmin 4 service...${NC}"
