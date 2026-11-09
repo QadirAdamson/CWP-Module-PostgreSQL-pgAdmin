@@ -122,9 +122,19 @@ with app.app_context():
             echo "ERROR: Empty username"
             exit 1
         fi
-        MAIL_UTIL=$(find /usr/pgadmin4/venv -name 'mail_util.py' 2>/dev/null | head -n 1)
-        if [ -n "$MAIL_UTIL" ] && [ -f "$MAIL_UTIL" ]; then
-            sed -i "s/if email in \[\"root\", \"admin\"\]:/if email in [\"root\", \"admin\", \"$NEW_USER\"]:/g" "$MAIL_UTIL" 2>/dev/null || true
+        VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
+        if [ -f "$VAL_UTIL" ]; then
+            /usr/pgadmin4/venv/bin/python3 -c "
+f = '$VAL_UTIL'
+with open(f, 'r') as fp:
+    c = fp.read()
+if 'ALLOW_ANY_USERNAME' not in c:
+    target = 'if not isinstance(email, (str, bytes)):\n        return False'
+    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
+    c = c.replace(target, replacement)
+    with open(f, 'w') as fp:
+        fp.write(c)
+" 2>/dev/null || true
         fi
         /usr/pgadmin4/venv/bin/python3 -c "
 import sys
@@ -136,6 +146,8 @@ with app.app_context():
     if u:
         u.email = '$NEW_USER'
         u.username = '$NEW_USER'
+        u.login_attempts = 0
+        u.locked = False
         db.session.commit()
         print('SUCCESS')
     else:
@@ -147,6 +159,20 @@ with app.app_context():
         ;;
     change_pgadmin_pwd)
         NEW_PWD=$ARG1
+        VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
+        if [ -f "$VAL_UTIL" ]; then
+            /usr/pgadmin4/venv/bin/python3 -c "
+f = '$VAL_UTIL'
+with open(f, 'r') as fp:
+    c = fp.read()
+if 'ALLOW_ANY_USERNAME' not in c:
+    target = 'if not isinstance(email, (str, bytes)):\n        return False'
+    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
+    c = c.replace(target, replacement)
+    with open(f, 'w') as fp:
+        fp.write(c)
+" 2>/dev/null || true
+        fi
         /usr/pgadmin4/venv/bin/python3 -c "
 import sys
 sys.path.insert(0, '/usr/pgadmin4/web')
@@ -157,6 +183,8 @@ with app.app_context():
     u = User.query.first()
     if u:
         u.password = hash_password('$NEW_PWD')
+        u.login_attempts = 0
+        u.locked = False
         db.session.commit()
         print('SUCCESS')
     else:

@@ -130,28 +130,42 @@ if __name__ == '__main__':
     werkzeug.serving.run_simple('0.0.0.0', 5050, app, threaded=True)
 RUNPY
 
-# Allow system "root" username in pgAdmin (dynamically discover mail_util.py across python versions)
-MAIL_UTIL=$(find /usr/pgadmin4/venv -name 'mail_util.py' 2>/dev/null | head -n 1)
-if [ -n "$MAIL_UTIL" ] && [ -f "$MAIL_UTIL" ]; then
+# Allow any username (including 'root', 'admin', and local usernames) in pgAdmin
+VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
+if [ -f "$VAL_UTIL" ]; then
     /usr/pgadmin4/venv/bin/python3 -c "
-mail_file = '$MAIL_UTIL'
-try:
-    with open(mail_file, 'r') as f:
-        c = f.read()
-    if 'if email in [\"root\", \"admin\"]:' not in c:
-        c = c.replace('def normalize(self, email: str) -> str:\n', 'def normalize(self, email: str) -> str:\n        if email in [\"root\", \"admin\"]:\n            return email\n')
-        c = c.replace('def validate(self, email: str) -> str:\n', 'def validate(self, email: str) -> str:\n        if email in [\"root\", \"admin\"]:\n            return email\n')
-        with open(mail_file, 'w') as f:
-            f.write(c)
-except Exception:
-    pass
+f = '$VAL_UTIL'
+with open(f, 'r') as fp:
+    c = fp.read()
+if 'ALLOW_ANY_USERNAME' not in c:
+    target = 'if not isinstance(email, (str, bytes)):\n        return False'
+    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
+    c = c.replace(target, replacement)
+    with open(f, 'w') as fp:
+        fp.write(c)
 " 2>/dev/null || true
 fi
 
 # Initialize pgAdmin database non-interactively
-export PGADMIN_SETUP_EMAIL="root@cwp.local"
+export PGADMIN_SETUP_EMAIL="root"
 export PGADMIN_SETUP_PASSWORD="password"
 /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py setup-db 2>/dev/null || true
+
+# Ensure initial user has clean state
+/usr/pgadmin4/venv/bin/python3 -c "
+import sys
+sys.path.insert(0, '/usr/pgadmin4/web')
+from pgAdmin4 import app
+from pgadmin.model import User, db
+with app.app_context():
+    u = User.query.first()
+    if u:
+        u.email = 'root'
+        u.username = 'root'
+        u.login_attempts = 0
+        u.locked = False
+        db.session.commit()
+" 2>/dev/null || true
 
 cat << 'PGSERVICE' > /etc/systemd/system/pgadmin4.service
 [Unit]
