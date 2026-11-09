@@ -558,6 +558,9 @@ if (!empty($user_raw)) {
                                 <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
                                     Change
                                 </button>
+                                <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" style="color:#28a745; font-weight:bold; font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-left:6px;" onmouseover="this.style.color='#1e7e34'; this.style.textDecoration='underline';" onmouseout="this.style.color='#28a745'; this.style.textDecoration='none';" title="Open pgAdmin in new tab">
+                                    Open <i class="icon12 icomoon-icon-new-tab" style="color:inherit; font-size:11px;"></i>
+                                </a>
                             </form>
                         </td>
                     </tr>
