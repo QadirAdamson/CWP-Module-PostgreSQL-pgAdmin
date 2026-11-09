@@ -76,7 +76,7 @@ from pgAdmin4 import app
 from pgadmin.model import User, db
 from flask_security.utils import hash_password
 with app.app_context():
-    u = User.query.filter_by(username='root').first() or User.query.filter_by(email='root').first()
+    u = User.query.filter_by(username='root').first() or User.query.filter_by(email='root').first() or User.query.filter_by(email='root@cwp.local').first()
     if u:
         u.password = hash_password('$NEW_PWD')
         db.session.commit()

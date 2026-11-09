@@ -111,7 +111,7 @@ mkdir -p /var/log/pgadmin /var/lib/pgadmin /etc/pgadmin
 
 cat << 'PGLOCAL' > /etc/pgadmin/config_system.py
 SERVER_MODE = True
-DEFAULT_SERVER = '127.0.0.1'
+DEFAULT_SERVER = '0.0.0.0'
 DEFAULT_SERVER_PORT = 5050
 DATA_DIR = '/var/lib/pgadmin'
 LOG_FILE = '/var/log/pgadmin/pgadmin4.log'
@@ -127,7 +127,7 @@ from pgAdmin4 import app
 import werkzeug.serving
 
 if __name__ == '__main__':
-    werkzeug.serving.run_simple('127.0.0.1', 5050, app, threaded=True)
+    werkzeug.serving.run_simple('0.0.0.0', 5050, app, threaded=True)
 RUNPY
 
 # Allow system "root" username in pgAdmin (dynamically discover mail_util.py across python versions)
@@ -147,6 +147,11 @@ except Exception:
     pass
 " 2>/dev/null || true
 fi
+
+# Initialize pgAdmin database non-interactively
+export PGADMIN_SETUP_EMAIL="root@cwp.local"
+export PGADMIN_SETUP_PASSWORD="password"
+/usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py setup-db 2>/dev/null || true
 
 cat << 'PGSERVICE' > /etc/systemd/system/pgadmin4.service
 [Unit]
@@ -171,36 +176,23 @@ systemctl daemon-reload
 systemctl enable --now pgadmin4
 systemctl restart pgadmin4
 
-# 5. Configure cwpsrv (Nginx Proxy for /pgadmin)
-echo -e "\n${YELLOW}[5/6] Configuring CWP cwpsrv reverse proxy (/pgadmin)...${NC}"
-sed -i '/location ~ \/(pgadmin|PgAdmin|Pgadmin|phppgadmin|phpPgadmin)/,+2d' /usr/local/cwpsrv/conf/cwp_rewrite.conf 2>/dev/null || true
+# 5. Clean any legacy cwpsrv reverse proxy & open standalone pgAdmin port 5050
+echo -e "\n${YELLOW}[5/6] Opening pgAdmin Web Port 5050 in Firewall...${NC}"
+sed -i '/location \/pgadmin\//,+15d' /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null || true
+sed -i '/location = \/pgadmin/,+2d' /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null || true
+systemctl reload cwpsrv 2>/dev/null || true
 
-if ! grep -q "location /pgadmin/" /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null; then
-cat << 'CWPNX' >> /usr/local/cwpsrv/conf/cwp_services.conf
-
-# pgAdmin 4 Reverse Proxy
-location /pgadmin/ {
-    proxy_pass http://127.0.0.1:5050/;
-    proxy_set_header X-Script-Name /pgadmin;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_redirect off;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_read_timeout 600s;
-    proxy_send_timeout 600s;
-}
-
-location = /pgadmin {
-    return 301 /pgadmin/;
-}
-CWPNX
+iptables -I INPUT -p tcp --dport 5050 -j ACCEPT 2>/dev/null || true
+if which firewall-cmd >/dev/null 2>&1 && systemctl is-active firewalld >/dev/null 2>&1; then
+    firewall-cmd --add-port=5050/tcp --permanent 2>/dev/null || true
+    firewall-cmd --reload 2>/dev/null || true
 fi
-
-systemctl reload cwpsrv
+if [ -f /etc/csf/csf.conf ]; then
+    if ! grep -E '^TCP_IN = .*5050' /etc/csf/csf.conf >/dev/null 2>&1; then
+        sed -i -E 's/(TCP_IN = "[^"]*)/\1,5050/' /etc/csf/csf.conf 2>/dev/null || true
+        csf -r 2>/dev/null || true
+    fi
+fi
 
 # 6. Deploy CWP Module & Controller Script
 echo -e "\n${YELLOW}[6/6] Installing CWP Admin Module and Menu...${NC}"
@@ -232,5 +224,5 @@ echo -e "\n${GREEN}=============================================================
 echo -e "${GREEN}  Installation completed successfully! (PostgreSQL ${PG_VER} & pgAdmin 4)      ${NC}"
 echo -e "${GREEN}  - CWP Module: CWP Admin -> SQL Services -> PostgreSQL / pgAdmin             ${NC}"
 echo -e "${GREEN}  - Direct Link: https://YOUR_SERVER_IP:2031/admin/index.php?module=postgresql-pgadmin${NC}"
-echo -e "${GREEN}  - pgAdmin 4 Web: http://YOUR_SERVER_IP:2030/pgadmin/                        ${NC}"
+echo -e "${GREEN}  - pgAdmin 4 Web: http://YOUR_SERVER_IP:5050/                                ${NC}"
 echo -e "${GREEN}==============================================================================${NC}"

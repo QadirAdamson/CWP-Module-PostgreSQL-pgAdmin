@@ -41,9 +41,11 @@ systemctl disable pgadmin4 2>/dev/null || true
 rm -f /etc/systemd/system/pgadmin4.service
 systemctl daemon-reload
 
-# 4. Remove cwpsrv proxy configuration
+# 4. Remove any legacy cwpsrv proxy configuration
 echo -e "\n${YELLOW}[4/4] Cleaning CWP web server configuration...${NC}"
 sed -i '/# pgAdmin 4 Reverse Proxy/,+17d' /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null || true
+sed -i '/location \/pgadmin\//,+15d' /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null || true
+sed -i '/location = \/pgadmin/,+2d' /usr/local/cwpsrv/conf/cwp_services.conf 2>/dev/null || true
 systemctl reload cwpsrv 2>/dev/null || true
 
 echo -e "\n${GREEN}==============================================================================${NC}"

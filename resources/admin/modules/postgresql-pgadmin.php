@@ -470,7 +470,11 @@ if (!empty($user_raw)) {
                 <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 16px 0;">
                 
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:18px;">
-                    <a href="/pgadmin/" target="_blank" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; text-decoration:none; border-radius:4px; display:inline-flex; align-items:center; gap:6px;">
+                    <?php
+                    $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
+                    $pgadmin_url = "http://{$pgadmin_host}:5050/";
+                    ?>
+                    <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; text-decoration:none; border-radius:4px; display:inline-flex; align-items:center; gap:6px;">
                         <i class="icon16 icomoon-icon-new-tab" style="color:#ffffff !important;"></i> Open pgAdmin
                     </a>
                     <form method="POST" style="margin:0; display:inline-block;">
@@ -485,7 +489,7 @@ if (!empty($user_raw)) {
             <!-- Change pgAdmin Password Form -->
             <div style="background:#f8f9fa; border:1px solid #e4e7ed; border-radius:5px; padding:15px; margin-top:5px;">
                 <div style="font-size:12px; font-weight:bold; color:#495057; margin-bottom:10px;">
-                    <i class="icon16 icomoon-icon-key" style="color:#007bff; margin-right:5px;"></i> pgAdmin username: <code>root</code> | Change Password:
+                    <i class="icon16 icomoon-icon-key" style="color:#007bff; margin-right:5px;"></i> pgAdmin username: <code>root@cwp.local</code> | Change Password:
                 </div>
                 <form method="POST" style="display:flex; gap:10px; margin:0;">
                     <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="Enter new password" required style="height:34px; font-size:12px; border:1px solid #ced4da; border-radius:4px; flex:1;">
