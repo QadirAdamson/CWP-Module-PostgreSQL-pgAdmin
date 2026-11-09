@@ -64,6 +64,12 @@ case $ACTION in
     pgadmin_status)
         systemctl is-active pgadmin4
         ;;
+    pgadmin_start)
+        systemctl start pgadmin4
+        ;;
+    pgadmin_stop)
+        systemctl stop pgadmin4
+        ;;
     pgadmin_restart)
         systemctl restart pgadmin4
         ;;

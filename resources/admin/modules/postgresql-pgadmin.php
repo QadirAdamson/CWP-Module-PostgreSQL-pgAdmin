@@ -41,7 +41,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif (isset($_POST['pgadmin_service_action'])) {
         $pa_act = $_POST['pgadmin_service_action'];
-        if ($pa_act === 'restart') {
+        if ($pa_act === 'start') {
+            shell_exec("$ctl pgadmin_start");
+            $message = "pgAdmin 4 Web service started successfully.";
+            $msg_type = "success";
+        } elseif ($pa_act === 'stop') {
+            shell_exec("$ctl pgadmin_stop");
+            $message = "pgAdmin 4 Web service stopped.";
+            $msg_type = "danger";
+        } elseif ($pa_act === 'restart') {
             shell_exec("$ctl pgadmin_restart");
             $message = "pgAdmin 4 Web service restarted successfully.";
             $msg_type = "success";
@@ -470,19 +478,34 @@ if (!empty($user_raw)) {
                 <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 16px 0;">
                 
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:18px;">
-                    <?php
-                    $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
-                    $pgadmin_url = "http://{$pgadmin_host}:5050/";
-                    ?>
-                    <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; text-decoration:none; border-radius:4px; display:inline-flex; align-items:center; gap:6px;">
-                        <i class="icon16 icomoon-icon-new-tab" style="color:#ffffff !important;"></i> Open pgAdmin
-                    </a>
-                    <form method="POST" style="margin:0; display:inline-block;">
-                        <input type="hidden" name="pgadmin_service_action" value="restart">
-                        <button type="submit" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
-                            <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
-                        </button>
-                    </form>
+                    <?php if ($is_pgadmin_active): ?>
+                        <?php
+                        $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
+                        $pgadmin_url = "http://{$pgadmin_host}:5050/";
+                        ?>
+                        <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; text-decoration:none; border-radius:4px; display:inline-flex; align-items:center; gap:6px;">
+                            <i class="icon16 icomoon-icon-new-tab" style="color:#ffffff !important;"></i> Open pgAdmin
+                        </a>
+                        <form method="POST" style="margin:0; display:inline-block;">
+                            <input type="hidden" name="pgadmin_service_action" value="restart">
+                            <button type="submit" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
+                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
+                            </button>
+                        </form>
+                        <form method="POST" style="margin:0; display:inline-block;" onsubmit="return confirm('Stop pgAdmin 4 service?');">
+                            <input type="hidden" name="pgadmin_service_action" value="stop">
+                            <button type="submit" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Stop pgAdmin Service">
+                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <form method="POST" style="margin:0; display:inline-block;">
+                            <input type="hidden" name="pgadmin_service_action" value="start">
+                            <button type="submit" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Start pgAdmin Service">
+                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start Service
+                            </button>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
 
