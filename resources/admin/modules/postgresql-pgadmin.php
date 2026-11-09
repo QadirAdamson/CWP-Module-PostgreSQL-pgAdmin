@@ -404,6 +404,11 @@ if (!empty($user_raw)) {
             <i class="icon16 icomoon-icon-users"></i> <span>Users (<?php echo count($users); ?>)</span>
         </a>
     </li>
+    <li>
+        <a href="index.php?module=postgresql-pgadmin&tab=config" class="<?php echo ($tab==='config') ? 'active-tab' : 'inactive-tab'; ?>">
+            <i class="icon16 icomoon-icon-cogs"></i> <span>Settings</span>
+        </a>
+    </li>
 </ul>
 
 <!-- TAB: OVERVIEW -->
@@ -668,7 +673,8 @@ if (!empty($user_raw)) {
     </div>
 </div>
 <?php endif; ?>
-<?php elseif ($tab === 'config'): ?>
+<!-- TAB: SETTINGS / CONFIG -->
+<?php if ($tab === 'config'): ?>
 <!-- PostgreSQL Configuration File Editor Card -->
 <div class="row">
     <div class="col-md-12">
