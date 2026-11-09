@@ -25,7 +25,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Ask user for PostgreSQL version (default to latest LTS: 17)
+# Ask user for PostgreSQL version (default to latest LTS: 17 with 10s timeout)
 echo -e "\n${CYAN}Available PostgreSQL LTS Versions:${NC}"
 echo -e "  [1] PostgreSQL 14"
 echo -e "  [2] PostgreSQL 15"
@@ -33,7 +33,11 @@ echo -e "  [3] PostgreSQL 16"
 echo -e "  [4] PostgreSQL 17 (Recommended / Latest LTS)"
 echo -e "  [5] PostgreSQL 18"
 
-read -p "Select PostgreSQL version to install [1-5] (Default: 4 -> PostgreSQL 17): " PG_CHOICE
+PG_CHOICE=""
+if [ -e /dev/tty ]; then
+    read -t 10 -p "Select PostgreSQL version to install [1-5] (Default: 4 -> PostgreSQL 17 in 10s): " PG_CHOICE < /dev/tty || true
+    echo ""
+fi
 
 case "$PG_CHOICE" in
     1) PG_VER=14 ;;
