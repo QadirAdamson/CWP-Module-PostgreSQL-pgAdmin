@@ -156,18 +156,19 @@ import sys
 sys.path.insert(0, '/usr/pgadmin4/web')
 from pgAdmin4 import app
 from pgadmin.model import User, db
+new_email = sys.argv[1]
 with app.app_context():
     u = User.query.first()
     if u:
-        u.email = '$NEW_USER'
-        u.username = '$NEW_USER'
+        u.email = new_email
+        u.username = new_email
         u.login_attempts = 0
         u.locked = False
         db.session.commit()
         print('SUCCESS')
     else:
         print('NO_USER')
-"
+" "$NEW_USER"
         # Sync server definition in pgAdmin for the updated user
         TMP_JSON="/tmp/pga_servers_$$.json"
         cat << JSONEOF > "$TMP_JSON"
@@ -199,17 +200,18 @@ sys.path.insert(0, '/usr/pgadmin4/web')
 from pgAdmin4 import app
 from pgadmin.model import User, db
 from flask_security.utils import hash_password
+new_password = sys.argv[1]
 with app.app_context():
     u = User.query.first()
     if u:
-        u.password = hash_password('$NEW_PWD')
+        u.password = hash_password(new_password)
         u.login_attempts = 0
         u.locked = False
         db.session.commit()
         print('SUCCESS')
     else:
         print('USER_NOT_FOUND')
-"
+" "$NEW_PWD"
         ;;
     pgadmin_sync_servers)
         CURRENT_USER=$(python3 -c "import sqlite3; conn = sqlite3.connect('/var/lib/pgadmin/pgadmin4.db'); c = conn.cursor(); c.execute('SELECT email FROM user LIMIT 1'); r = c.fetchone(); print(r[0] if r and r[0] else 'admin@cwp.com')" 2>/dev/null || echo "admin@cwp.com")
@@ -245,25 +247,53 @@ JSONEOF
         ;;
     create_db)
         DBNAME=$ARG1
-        su - postgres -c "createdb -p $PG_PORT '$DBNAME'"
+        if [[ ! "$DBNAME" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            echo "ERROR: Invalid database name"
+            exit 1
+        fi
+        su - postgres -c "createdb -p $PG_PORT \"$DBNAME\""
         ;;
     drop_db)
         DBNAME=$ARG1
-        su - postgres -c "dropdb -p $PG_PORT '$DBNAME'"
+        if [[ ! "$DBNAME" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            echo "ERROR: Invalid database name"
+            exit 1
+        fi
+        su - postgres -c "dropdb -p $PG_PORT \"$DBNAME\""
         ;;
     create_user)
         USERNAME=$ARG1
         PASSWORD=$ARG2
-        su - postgres -c "psql -p $PG_PORT -c \"CREATE USER \\\"$USERNAME\\\" WITH PASSWORD '$PASSWORD';\""
+        if [[ ! "$USERNAME" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            echo "ERROR: Invalid username"
+            exit 1
+        fi
+        ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
+        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+CREATE USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
+SQLEOF
         ;;
     change_user_pwd)
         USERNAME=$ARG1
         PASSWORD=$ARG2
-        su - postgres -c "psql -p $PG_PORT -c \"ALTER USER \\\"$USERNAME\\\" WITH PASSWORD '$PASSWORD';\""
+        if [[ ! "$USERNAME" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            echo "ERROR: Invalid username"
+            exit 1
+        fi
+        ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
+        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+ALTER USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
+SQLEOF
         ;;
     drop_user)
         USERNAME=$ARG1
-        su - postgres -c "psql -p $PG_PORT -c \"DROP USER \\\"$USERNAME\\\" ;\""
+        if [[ ! "$USERNAME" =~ ^[a-zA-Z0-9_]+$ ]]; then
+            echo "ERROR: Invalid username"
+            exit 1
+        fi
+        su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" <<SQLEOF
+DROP USER "$USERNAME";
+SQLEOF
         ;;
     get_conf_path)
         echo "$CONF"
@@ -274,9 +304,13 @@ JSONEOF
         fi
         ;;
     save_conf)
-        # Reads new configuration from stdin or tmp file
+        # Reads new configuration from tmp file
         TMP_CONF="$ARG1"
         if [ -f "$TMP_CONF" ] && [ -f "$CONF" ]; then
+            case "$TMP_CONF" in
+                /tmp/*) ;;
+                *) echo "ERROR: Invalid configuration file path"; exit 1 ;;
+            esac
             cp -f "$CONF" "${CONF}.bak_$(date +%Y%m%d_%H%M%S)"
             cp -f "$TMP_CONF" "$CONF"
             chown postgres:postgres "$CONF" 2>/dev/null || true
