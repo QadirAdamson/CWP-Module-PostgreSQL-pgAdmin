@@ -504,12 +504,8 @@ if (!empty($user_raw)) {
             ?>
             <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <h3 style="margin:0; font-size:20px; font-weight:bold;">
-                        <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" style="color:#17283a; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Open pgAdmin in new tab">
-                            <i class="icon16 icomoon-icon-dashboard" style="color:#2f80ed;"></i> 
-                            <span>pgAdmin</span> 
-                            <i class="icon12 icomoon-icon-new-tab" style="color:#2f80ed; font-size:13px;"></i>
-                        </a>
+                    <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
+                        <i class="icon16 icomoon-icon-dashboard" style="color:#2f80ed; margin-right:6px;"></i> pgAdmin
                     </h3>
                     <div>
                         <?php if ($is_pgadmin_active): ?>
@@ -558,8 +554,8 @@ if (!empty($user_raw)) {
                                 <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
                                     Change
                                 </button>
-                                <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" style="color:#28a745; font-weight:bold; font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-left:6px;" onmouseover="this.style.color='#1e7e34'; this.style.textDecoration='underline';" onmouseout="this.style.color='#28a745'; this.style.textDecoration='none';" title="Open pgAdmin in new tab">
-                                    Open <i class="icon12 icomoon-icon-new-tab" style="color:inherit; font-size:11px;"></i>
+                                <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; height:30px; line-height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; display:inline-flex; align-items:center; gap:5px; text-decoration:none;" title="Open pgAdmin in new tab">
+                                    <i class="icon12 icomoon-icon-new-tab" style="color:#ffffff !important; font-size:11px;"></i> Open
                                 </a>
                             </form>
                         </td>
