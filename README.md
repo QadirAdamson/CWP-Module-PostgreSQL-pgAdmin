@@ -1,18 +1,18 @@
 # PostgreSQL & pgAdmin Management Module for Control Web Panel (CWP)
 
-A high-performance, native PostgreSQL & pgAdmin 4 (Web Mode) management module designed for [Control Web Panel (CWP)](https://control-webpanel.com/).
+A native PostgreSQL and pgAdmin 4 management module designed for [Control Web Panel (CWP)](https://control-webpanel.com/).
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-- **Multi-Version PostgreSQL**: Install and manage PostgreSQL 14, 15, 16, 17, or 18 via LTS installer selector.
-- **Database Management**: Create, inspect, and drop databases with live disk size and encoding statistics.
-- **User Management**: Manage roles, grant superuser privileges, update passwords, and delete users safely.
-- **pgAdmin 4 Web Deployment**: Native pgAdmin 4 service on port 5050 with automatic server discovery.
-- **Service Controls**: Start, stop, and restart PostgreSQL and pgAdmin 4 services directly from the panel.
-- **Dynamic Port Configuration**: Update PostgreSQL (default: 5432) and pgAdmin 4 (default: 5050) ports with automated firewall sync.
-- **Configuration Editor**: In-browser `postgresql.conf` editor with automated backups and service restart.
+- **Multi-Version Support**: Choose and install your preferred PostgreSQL version during setup.
+- **Database Management**: Create, inspect, and safely delete PostgreSQL databases.
+- **User Management**: Create database users, update passwords, and manage permissions.
+- **pgAdmin 4 Web Interface**: Manage your databases visually with an integrated pgAdmin 4 web panel.
+- **Service Management**: Easily start, stop, and restart PostgreSQL and pgAdmin services.
+- **Port Management**: Customize service ports directly from the panel with automatic firewall configuration.
+- **Configuration Editor**: View and edit the PostgreSQL configuration file with automatic backups.
 
 ---
 
