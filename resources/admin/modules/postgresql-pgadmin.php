@@ -576,8 +576,8 @@ if (!empty($user_raw)) {
                         <td>
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="New password" required style="width:170px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;">
-                                <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Update password">
-                                    <i class="icon16 icomoon-icon-key" style="color:#ffffff !important;"></i> Save
+                                <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new password">
+                                    Change
                                 </button>
                             </form>
                         </td>
