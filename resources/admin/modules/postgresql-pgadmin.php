@@ -245,7 +245,7 @@ if (!empty($user_raw)) {
 }
 .sortable-th:hover {
     background: #eef2f7 !important;
-    color: #007bff !important;
+    color: #2f80ed !important;
 }
 .sort-icon {
     display: inline-block;
@@ -319,7 +319,7 @@ if (!empty($user_raw)) {
     cursor: pointer !important;
 }
 .cwp-pg-tabs li a.active-tab {
-    background: #007bff !important;
+    background: #2f80ed !important;
     color: #ffffff !important;
     border: none !important;
 }
@@ -432,7 +432,7 @@ if (!empty($user_raw)) {
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing PostgreSQL port requires restarting PostgreSQL service. Continue?');">
                                 <input type="hidden" name="action" value="set_pg_port">
                                 <input type="number" name="new_port" min="1" max="65535" value="<?php echo htmlspecialchars($pg_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
-                                <button type="submit" class="btn btn-primary" style="background:#007bff; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new port">
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new port">
                                     <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
                                 </button>
                             </form>
@@ -512,11 +512,11 @@ if (!empty($user_raw)) {
             <!-- Change pgAdmin Password Form -->
             <div style="background:#f8f9fa; border:1px solid #e4e7ed; border-radius:5px; padding:15px; margin-top:5px;">
                 <div style="font-size:12px; font-weight:bold; color:#495057; margin-bottom:10px;">
-                    <i class="icon16 icomoon-icon-key" style="color:#007bff; margin-right:5px;"></i> pgAdmin username: <code>root@cwp.local</code> | Change Password:
+                    <i class="icon16 icomoon-icon-key" style="color:#2f80ed; margin-right:5px;"></i> pgAdmin username: <code>root@cwp.local</code> | Change Password:
                 </div>
                 <form method="POST" style="display:flex; gap:10px; margin:0;">
                     <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="Enter new password" required style="height:34px; font-size:12px; border:1px solid #ced4da; border-radius:4px; flex:1;">
-                    <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#007bff; border:none; height:34px; padding:0 16px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
+                    <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 16px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
                         Save
                     </button>
                 </form>
@@ -533,7 +533,7 @@ if (!empty($user_raw)) {
         <div class="pdns-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
                 <h4 style="margin:0; font-size:16px;">
-                    <i class="icon16 icomoon-icon-database" style="color:#007bff; margin-right:5px;"></i> <b>Databases</b>
+                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:5px;"></i> <b>Databases</b>
                 </h4>
             </div>
 
@@ -541,7 +541,7 @@ if (!empty($user_raw)) {
             <form method="POST" style="margin-bottom:20px; display:flex; gap:10px; align-items:center;">
                 <input type="hidden" name="action" value="create_db">
                 <input type="text" name="dbname" class="form-control" placeholder="Enter database name" required pattern="[a-zA-Z0-9_]+" style="max-width:380px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
-                <button type="submit" class="btn btn-primary" style="background:#007bff; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
+                <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
                     <i class="icon16 icomoon-icon-plus" style="color:#ffffff !important;"></i> Create Database
                 </button>
             </form>
@@ -598,7 +598,7 @@ if (!empty($user_raw)) {
         <div class="pdns-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
                 <h4 style="margin:0; font-size:16px;">
-                    <i class="icon16 icomoon-icon-users" style="color:#007bff; margin-right:5px;"></i> <b>Users</b>
+                    <i class="icon16 icomoon-icon-users" style="color:#2f80ed; margin-right:5px;"></i> <b>Users</b>
                 </h4>
             </div>
 
@@ -607,7 +607,7 @@ if (!empty($user_raw)) {
                 <input type="hidden" name="action" value="create_user">
                 <input type="text" name="username" class="form-control" placeholder="Enter username" required pattern="[a-zA-Z0-9_]+" style="max-width:240px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
                 <input type="password" name="password" class="form-control" placeholder="Password" required style="max-width:240px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
-                <button type="submit" class="btn btn-primary" style="background:#007bff; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
+                <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
                     <i class="icon16 icomoon-icon-user-plus" style="color:#ffffff !important;"></i> Add User
                 </button>
             </form>
@@ -640,7 +640,7 @@ if (!empty($user_raw)) {
                                 </td>
                                 <td>
                                     <div style="display:inline-flex; align-items:center; gap:6px;">
-                                        <button type="button" class="btn btn-primary" onclick="toggleUserPasswordRow('pwd-row-<?php echo $idx; ?>')" style="background:#007bff !important; border:none; height:28px; padding:0 10px; font-size:11px; font-weight:bold; color:#ffffff !important; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Update Password">
+                                        <button type="button" class="btn btn-primary" onclick="toggleUserPasswordRow('pwd-row-<?php echo $idx; ?>')" style="background:#2f80ed !important; border:none; height:28px; padding:0 10px; font-size:11px; font-weight:bold; color:#ffffff !important; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Update Password">
                                             <i class="icon16 icomoon-icon-key" style="color:#ffffff !important;"></i> Update Password
                                         </button>
                                         <?php if ($u['username'] !== 'postgres'): ?>
@@ -665,7 +665,7 @@ if (!empty($user_raw)) {
                                             New password for <u><?php echo htmlspecialchars($u['username']); ?></u>:
                                         </span>
                                         <input type="password" name="new_password" class="form-control" placeholder="Enter new password" required style="max-width:240px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px;">
-                                        <button type="submit" class="btn btn-primary" style="background:#007bff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
+                                        <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
                                             Update Password
                                         </button>
                                         <button type="button" onclick="toggleUserPasswordRow('pwd-row-<?php echo $idx; ?>')" class="btn btn-default" style="height:30px; padding:0 12px; font-size:12px; border:1px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">
@@ -699,7 +699,7 @@ if (!empty($user_raw)) {
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
                 <div style="display:flex; align-items:center;">
                     <h4 style="margin:0; font-size:16px;">
-                        <i class="icon16 icomoon-icon-cogs" style="color:#007bff; margin-right:5px;"></i>
+                        <i class="icon16 icomoon-icon-cogs" style="color:#2f80ed; margin-right:5px;"></i>
                         <b>PostgreSQL Configuration File (<code><?php echo htmlspecialchars($pg_conf_path); ?></code>)</b>
                     </h4>
                 </div>
@@ -718,7 +718,7 @@ if (!empty($user_raw)) {
                     <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:normal; margin:0;">
                         <input type="checkbox" name="restart_after_save" value="1" checked> <span style="margin: 10px 0 0 -10px">Restart PostgreSQL after changes</span>
                     </label>
-                    <button type="submit" name="save_config" class="btn btn-primary" style="background:#007bff !important; background-color:#007bff !important; color:#ffffff !important; border:none; padding:8px 22px; font-weight:bold; font-size:13px; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                    <button type="submit" name="save_config" class="btn btn-primary" style="background:#2f80ed !important; background-color:#2f80ed !important; color:#ffffff !important; border:none; padding:8px 22px; font-weight:bold; font-size:13px; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
                         <i class="icon16 icomoon-icon-disk" style="color:#fff;"></i> Save Configuration
                     </button>
                 </div>
@@ -779,7 +779,7 @@ function sortTable(tableId, colIndex, type) {
     var currentIcon = th.querySelector('.sort-icon');
     if (currentIcon) {
         currentIcon.innerHTML = (newDir === 'asc') ? '▲' : '▼';
-        currentIcon.style.color = '#007bff';
+        currentIcon.style.color = '#2f80ed';
     }
 
     rowPairs.sort(function(a, b) {
