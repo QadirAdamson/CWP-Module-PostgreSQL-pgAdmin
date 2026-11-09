@@ -36,8 +36,6 @@ Run on your CWP server as `root`:
 curl -fsSL https://raw.githubusercontent.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin/main/uninstall.sh | bash
 ```
 
-*(PostgreSQL server packages and user database data are preserved for safety).*
-
 ---
 
 ## 📄 License
