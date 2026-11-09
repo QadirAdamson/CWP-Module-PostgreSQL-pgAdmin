@@ -293,51 +293,6 @@ $is_pgadmin_active = ($pgadmin_status === 'active');
     color: #ffffff !important;
 }
 
-/* Force Tab Styles to be visible and isolated */
-.cwp-pg-tabs {
-    display: flex !important;
-    list-style: none !important;
-    padding: 0 !important;
-    margin: 0 0 20px 0 !important;
-    border-bottom: 2px solid #ddd !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-.cwp-pg-tabs li {
-    margin-right: 8px !important;
-    display: block !important;
-}
-.cwp-pg-tabs li a {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding: 10px 18px !important;
-    text-decoration: none !important;
-    border-radius: 4px 4px 0 0 !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    line-height: 1.4 !important;
-    cursor: pointer !important;
-}
-.cwp-pg-tabs li a.active-tab {
-    background: #2f80ed !important;
-    color: #ffffff !important;
-    border: none !important;
-}
-.cwp-pg-tabs li a.active-tab i, .cwp-pg-tabs li a.active-tab span {
-    color: #ffffff !important;
-}
-.cwp-pg-tabs li a.inactive-tab {
-    background: #f8f9fa !important;
-    color: #333333 !important;
-    border: 1px solid #ddd !important;
-    border-bottom: none !important;
-}
-.cwp-pg-tabs li a.inactive-tab:hover {
-    background: #e9ecef !important;
-    color: #000000 !important;
-}
-
 /* Ensure all icons on colored buttons and badges are explicitly white */
 .btn-primary i, .btn-primary span,
 .btn-danger i, .btn-danger span,
@@ -392,19 +347,21 @@ $is_pgadmin_active = ($pgadmin_status === 'active');
 </div>
 <?php endif; ?>
 
-<!-- Tabs Navigation -->
-<ul class="cwp-pg-tabs nav nav-tabs">
-    <li>
-        <a href="index.php?module=postgresql-pgadmin&tab=overview" class="<?php echo ($tab==='overview') ? 'active-tab' : 'inactive-tab'; ?>">
-            <i class="icon16 icomoon-icon-dashboard"></i> <span>Overview</span>
-        </a>
-    </li>
-    <li>
-        <a href="index.php?module=postgresql-pgadmin&tab=config" class="<?php echo ($tab==='config') ? 'active-tab' : 'inactive-tab'; ?>">
-            <i class="icon16 icomoon-icon-cogs"></i> <span>Settings</span>
-        </a>
-    </li>
-</ul>
+<!-- Tabs Navigation (CWP Native Tabs) -->
+<div class="tabs" style="margin-bottom:20px;">
+    <ul class="nav nav-tabs">
+        <li class="<?php echo ($tab==='overview') ? 'active' : ''; ?>">
+            <a href="index.php?module=postgresql-pgadmin&tab=overview">
+                <i class="icon16 icomoon-icon-dashboard"></i> Overview
+            </a>
+        </li>
+        <li class="<?php echo ($tab==='config') ? 'active' : ''; ?>">
+            <a href="index.php?module=postgresql-pgadmin&tab=config">
+                <i class="icon16 icomoon-icon-cogs"></i> Settings
+            </a>
+        </li>
+    </ul>
+</div>
 
 <!-- TAB: OVERVIEW -->
 <?php if ($tab === 'overview'): ?>
