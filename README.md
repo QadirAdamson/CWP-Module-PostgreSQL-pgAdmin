@@ -7,6 +7,7 @@ A high-performance, native PostgreSQL & pgAdmin 4 (Web Mode) management module d
 ## ✨ Key Features
 
 - **🐘 Multi-Version PostgreSQL Support**: Interactive LTS version selector during installation (PostgreSQL 14, 15, 16, 17, 18).
+- **🗄️ Dedicated Database & User Tabs**: Create, inspect, and drop PostgreSQL databases with real-time disk sizes and encodings; manage database users with superuser indicators and inline password updates.
 - **🖥️ Standalone pgAdmin 4 Web (Port 5050)**: Native service deployment with automatic local PostgreSQL server discovery and registration.
 - **⚡ Ultra-Fast Sub-Second Page Loads**: High-speed metadata retrieval engine querying native configurations and SQLite in microseconds without heavy framework overhead.
 - **⚙️ In-Browser Configuration Editor**: Full-featured editor for `postgresql.conf` with automatic timestamped backups, syntax validation, and instant service restart.
