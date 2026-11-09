@@ -74,8 +74,15 @@ fi
 
 # 2. Init DB & Configure Auth
 echo -e "\n${YELLOW}[2/6] Configuring PostgreSQL ${PG_VER}...${NC}"
+
+# Ensure postgres user has a valid shell for initdb & CLI commands (EL packages set /sbin/nologin by default)
+usermod -s /bin/bash postgres 2>/dev/null || true
+
 if [ ! -d "/var/lib/pgsql/${PG_VER}/data/base" ]; then
-    /usr/pgsql-${PG_VER}/bin/postgresql-${PG_VER}-setup initdb
+    /usr/pgsql-${PG_VER}/bin/postgresql-${PG_VER}-setup initdb || {
+        echo -e "${YELLOW}Retrying initdb directly via postgres user...${NC}"
+        su - postgres -c "/usr/pgsql-${PG_VER}/bin/initdb -D /var/lib/pgsql/${PG_VER}/data"
+    }
 fi
 
 if [ -f "/var/lib/pgsql/${PG_VER}/data/pg_hba.conf" ]; then
@@ -87,6 +94,14 @@ fi
 systemctl daemon-reload
 systemctl enable --now postgresql-${PG_VER}
 echo "${PG_VER}" > /etc/cwp_active_pg_version
+
+# Wait briefly for PostgreSQL service to listen
+for i in {1..10}; do
+    if systemctl is-active --quiet postgresql-${PG_VER}; then
+        break
+    fi
+    sleep 1
+done
 
 # Set default password for postgres user
 su - postgres -c "psql -p 5432 -c \"ALTER USER postgres WITH PASSWORD '2qvUkiz7BgXGvNDx';\"" 2>/dev/null || true
