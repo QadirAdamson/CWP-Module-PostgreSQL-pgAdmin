@@ -398,14 +398,14 @@ if (!empty($user_raw)) {
                 <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
                     <?php if ($is_active): ?>
                         <button type="submit" name="service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart PostgreSQL Server">
-                            <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
+                            <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
                         </button>
                         <button type="submit" name="service_action" value="stop" class="btn btn-danger" onclick="return confirm('Stop PostgreSQL server?');" style="background:#dc3545; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
                             <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
                         </button>
                     <?php else: ?>
                         <button type="submit" name="service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
-                            <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start Service
+                            <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
                         </button>
                     <?php endif; ?>
                 </form>
@@ -525,7 +525,7 @@ if (!empty($user_raw)) {
                     <?php if ($is_pgadmin_active): ?>
                         <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
                             <button type="submit" name="pgadmin_service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
-                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
+                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
                             </button>
                             <button type="submit" name="pgadmin_service_action" value="stop" onclick="return confirm('Stop pgAdmin 4 service?');" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Stop pgAdmin Service">
                                 <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
@@ -534,7 +534,7 @@ if (!empty($user_raw)) {
                     <?php else: ?>
                         <form method="POST" style="margin:0; display:inline-block;">
                             <button type="submit" name="pgadmin_service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Start pgAdmin Service">
-                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start Service
+                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
                             </button>
                         </form>
                     <?php endif; ?>
