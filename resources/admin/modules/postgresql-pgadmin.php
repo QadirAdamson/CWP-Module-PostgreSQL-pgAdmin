@@ -449,15 +449,18 @@ if (!empty($user_raw)) {
 <div class="row">
     <!-- Left Column: PostgreSQL Info -->
     <div class="col-md-5">
-        <div class="pdns-card" style="min-height:220px; display:flex; flex-direction:column; justify-content:space-between;">
-            <h3 style="margin:0 0 15px 0; font-size:20px; font-weight:bold; color:#17283a;">
-                <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
-            </h3>
-            <table class="pdns-table">
+        <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px;">
+                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
+                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
+                </h3>
+            </div>
+            <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
+            <table class="pdns-table" style="margin:0;">
                 <tbody>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Port:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Port:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing PostgreSQL port requires restarting PostgreSQL service. Continue?');">
                                 <input type="hidden" name="action" value="set_pg_port">
                                 <input type="number" name="new_port" min="1" max="65535" value="<?php echo htmlspecialchars($pg_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
@@ -468,24 +471,24 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Databases:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Databases:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <a href="index.php?module=postgresql-pgadmin&tab=databases" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all databases">
                                 <b><?php echo count($databases); ?></b> Databases
                             </a>
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Users:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Users:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <a href="index.php?module=postgresql-pgadmin&tab=users" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all database users">
                                 <b><?php echo count($users); ?></b> Users
                             </a>
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Version:</td>
-                        <td><code><?php echo htmlspecialchars($pg_version_raw); ?></code></td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Version:</td>
+                        <td style="height:46px; vertical-align:middle;"><code><?php echo htmlspecialchars($pg_version_raw); ?></code></td>
                     </tr>
                 </tbody>
             </table>
@@ -494,62 +497,61 @@ if (!empty($user_raw)) {
 
     <!-- Right Column: pgAdmin -->
     <div class="col-md-7">
-        <div class="pdns-card" style="min-height:220px; display:flex; flex-direction:column; justify-content:space-between;">
-            <div>
-                <?php
-                $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
-                $pgadmin_url = "http://{$pgadmin_host}:" . htmlspecialchars($pgadmin_port_raw) . "/";
-                ?>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-                    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <h3 style="margin:0; font-size:20px; font-weight:bold;">
-                            <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" style="color:#17283a; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Open pgAdmin in new tab">
-                                <i class="icon16 icomoon-icon-dashboard" style="color:#2f80ed;"></i> 
-                                <span>pgAdmin</span> 
-                                <i class="icon12 icomoon-icon-new-tab" style="color:#2f80ed; font-size:13px;"></i>
-                            </a>
-                        </h3>
-                        <div>
-                            <?php if ($is_pgadmin_active): ?>
-                                <span class="badge" style="background:#28a745; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
-                                    <i class="icon16 icomoon-icon-checkmark-circle" style="color:#ffffff !important; margin-right:4px;"></i> Active
-                                </span>
-                            <?php else: ?>
-                                <span class="badge" style="background:#dc3545; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
-                                    <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important; margin-right:4px;"></i> Stopped
-                                </span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- Service Controls: Restart / Stop / Start -->
-                    <div style="display:flex; gap:6px; align-items:center;">
+        <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
+            <?php
+            $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
+            $pgadmin_url = "http://{$pgadmin_host}:" . htmlspecialchars($pgadmin_port_raw) . "/";
+            ?>
+            <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <h3 style="margin:0; font-size:20px; font-weight:bold;">
+                        <a href="<?php echo htmlspecialchars($pgadmin_url); ?>" target="_blank" rel="noopener noreferrer" style="color:#17283a; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Open pgAdmin in new tab">
+                            <i class="icon16 icomoon-icon-dashboard" style="color:#2f80ed;"></i> 
+                            <span>pgAdmin</span> 
+                            <i class="icon12 icomoon-icon-new-tab" style="color:#2f80ed; font-size:13px;"></i>
+                        </a>
+                    </h3>
+                    <div>
                         <?php if ($is_pgadmin_active): ?>
-                            <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
-                                <button type="submit" name="pgadmin_service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
-                                    <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
-                                </button>
-                                <button type="submit" name="pgadmin_service_action" value="stop" onclick="return confirm('Stop pgAdmin 4 service?');" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Stop pgAdmin Service">
-                                    <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
-                                </button>
-                            </form>
+                            <span class="badge" style="background:#28a745; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                                <i class="icon16 icomoon-icon-checkmark-circle" style="color:#ffffff !important; margin-right:4px;"></i> Active
+                            </span>
                         <?php else: ?>
-                            <form method="POST" style="margin:0; display:inline-block;">
-                                <button type="submit" name="pgadmin_service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Start pgAdmin Service">
-                                    <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start Service
-                                </button>
-                            </form>
+                            <span class="badge" style="background:#dc3545; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important; margin-right:4px;"></i> Stopped
+                            </span>
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Service Controls: Restart / Stop / Start -->
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <?php if ($is_pgadmin_active): ?>
+                        <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
+                            <button type="submit" name="pgadmin_service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
+                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
+                            </button>
+                            <button type="submit" name="pgadmin_service_action" value="stop" onclick="return confirm('Stop pgAdmin 4 service?');" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Stop pgAdmin Service">
+                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <form method="POST" style="margin:0; display:inline-block;">
+                            <button type="submit" name="pgadmin_service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Start pgAdmin Service">
+                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start Service
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
             </div>
+            <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
 
             <!-- pgAdmin Info & Settings Table -->
-            <table class="pdns-table">
+            <table class="pdns-table" style="margin:0;">
                 <tbody>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px;">Port:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Port:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing pgAdmin port requires restarting pgAdmin service. Continue?');">
                                 <input type="hidden" name="action" value="set_pgadmin_port">
                                 <input type="number" name="new_pgadmin_port" min="1" max="65535" value="<?php echo htmlspecialchars($pgadmin_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
@@ -560,8 +562,8 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Username:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Username:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="hidden" name="action" value="set_pgadmin_user">
                                 <input type="text" name="new_pgadmin_user" value="<?php echo htmlspecialchars($pgadmin_user_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
@@ -572,8 +574,8 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Password:</td>
-                        <td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Password:</td>
+                        <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="password" name="new_pgadmin_pwd" class="form-control" placeholder="New password" required style="width:170px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;">
                                 <button type="submit" name="change_pgadmin_password" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new password">
@@ -583,8 +585,8 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd;">Version:</td>
-                        <td><code><?php echo htmlspecialchars($pgadmin_version_raw); ?></code></td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Version:</td>
+                        <td style="height:46px; vertical-align:middle;"><code><?php echo htmlspecialchars($pgadmin_version_raw); ?></code></td>
                     </tr>
                 </tbody>
             </table>
