@@ -87,13 +87,23 @@ echo "${PG_VER}" > /etc/cwp_active_pg_version
 # Set default password for postgres user
 su - postgres -c "psql -p 5432 -c \"ALTER USER postgres WITH PASSWORD '2qvUkiz7BgXGvNDx';\"" 2>/dev/null || true
 
-# 3. Install pgAdmin 4 Web
-echo -e "\n${YELLOW}[3/6] Installing pgAdmin 4 Web...${NC}"
-if ! rpm -q pgadmin4-web >/dev/null 2>&1; then
-    rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-repo-2-1.noarch.rpm 2>/dev/null || true
-    rpm --import /etc/pki/rpm-gpg/PGADMIN_PKG_KEY 2>/dev/null || true
-    dnf install -y pgadmin4-web
-fi
+# 3. Install pgAdmin 4 Web (Latest compatible version)
+echo -e "\n${YELLOW}[3/6] Installing latest pgAdmin 4 Web for PostgreSQL ${PG_VER}...${NC}"
+rpm -Uvh --replacepkgs --nodeps https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-repo-2-1.noarch.rpm 2>/dev/null || \
+    dnf install -y https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-repo-2-1.noarch.rpm 2>/dev/null || true
+
+rpm --import https://www.pgadmin.org/static/packages_pgadmin_org.pub 2>/dev/null || true
+rpm --import /etc/pki/rpm-gpg/PGADMIN_PKG_KEY 2>/dev/null || true
+
+# Refresh repository cache to ensure the newest packages are resolved
+dnf clean expire-cache --disablerepo="*" --enablerepo="pgAdmin4" 2>/dev/null || true
+
+# Install or upgrade to the latest pgAdmin 4 Web & Server packages
+dnf install -y --best pgadmin4-web pgadmin4-server || dnf install -y pgadmin4-web pgadmin4-server
+dnf upgrade -y --best pgadmin4-web pgadmin4-server 2>/dev/null || true
+
+PGADMIN_VER=$(rpm -q --queryformat '%{VERSION}' pgadmin4-web 2>/dev/null || echo "latest")
+echo -e "${GREEN}✓ pgAdmin 4 version ${PGADMIN_VER} successfully installed and updated.${NC}"
 
 # 4. Setup pgAdmin 4 Python environment and systemd service
 echo -e "\n${YELLOW}[4/6] Setting up pgAdmin 4 service & admin account...${NC}"
@@ -120,9 +130,11 @@ if __name__ == '__main__':
     werkzeug.serving.run_simple('127.0.0.1', 5050, app, threaded=True)
 RUNPY
 
-# Allow system "root" username in pgAdmin
-/usr/pgadmin4/venv/bin/python3 -c "
-mail_file = '/usr/pgadmin4/venv/lib64/python3.12/site-packages/flask_security/mail_util.py'
+# Allow system "root" username in pgAdmin (dynamically discover mail_util.py across python versions)
+MAIL_UTIL=$(find /usr/pgadmin4/venv -name 'mail_util.py' 2>/dev/null | head -n 1)
+if [ -n "$MAIL_UTIL" ] && [ -f "$MAIL_UTIL" ]; then
+    /usr/pgadmin4/venv/bin/python3 -c "
+mail_file = '$MAIL_UTIL'
 try:
     with open(mail_file, 'r') as f:
         c = f.read()
@@ -134,6 +146,7 @@ try:
 except Exception:
     pass
 " 2>/dev/null || true
+fi
 
 cat << 'PGSERVICE' > /etc/systemd/system/pgadmin4.service
 [Unit]

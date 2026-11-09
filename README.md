@@ -11,7 +11,7 @@ A native PostgreSQL & pgAdmin 4 (Web Mode) management module designed for [Contr
 - **⚙️ Dynamic Port & Config Management**: In-browser configuration editor for `postgresql.conf` with automatic timestamped backups, instant service restart option, and custom PostgreSQL port switcher.
 - **🗄️ Database Management**: Create, list disk sizes & encodings, and drop databases directly from the GUI.
 - **👥 User Management**: Add users with passwords, view superuser privileges, inline password update drawers, and remove accounts.
-- **🔄 Service Controls & Updates**: Real-time service status, quick service restarts, and one-click in-place pgAdmin package updates.
+- **🔄 Service Controls & Management**: Real-time service status, quick service restarts, and automated latest pgAdmin 4 deployment.
 - **📊 PowerDNS-Style Unified UI**: Clean, responsive layout with clickable ASC/DESC column sorting for all tables.
 
 ---

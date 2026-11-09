@@ -45,10 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             shell_exec("$ctl pgadmin_restart");
             $message = "pgAdmin 4 Web service restarted successfully.";
             $msg_type = "success";
-        } elseif ($pa_act === 'upgrade') {
-            shell_exec("$ctl pgadmin_upgrade 2>&1");
-            $message = "pgAdmin 4 packages updated and service restarted successfully.";
-            $msg_type = "success";
         }
     } elseif (isset($_POST['change_pgadmin_password'])) {
         $new_pass = $_POST['new_pgadmin_pwd'] ?? '';
@@ -481,12 +477,6 @@ if (!empty($user_raw)) {
                         <input type="hidden" name="pgadmin_service_action" value="restart">
                         <button type="submit" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart pgAdmin Service">
                             <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart Service
-                        </button>
-                    </form>
-                    <form method="POST" style="margin:0; display:inline-block;" onsubmit="return confirm('Update pgAdmin 4 packages to the latest version?');">
-                        <input type="hidden" name="pgadmin_service_action" value="upgrade">
-                        <button type="submit" class="btn btn-primary" style="background:#007bff; color:#ffffff; border:none; padding:8px 20px; font-size:13px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Update pgAdmin 4 Packages">
-                            <i class="icon16 icomoon-icon-download" style="color:#ffffff !important;"></i> Update
                         </button>
                     </form>
                 </div>

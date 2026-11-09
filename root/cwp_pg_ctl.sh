@@ -67,17 +67,6 @@ case $ACTION in
     pgadmin_restart)
         systemctl restart pgadmin4
         ;;
-    pgadmin_upgrade)
-        dnf upgrade -y pgadmin4-web pgadmin4-server
-        MAIL_UTIL=$(find /usr/pgadmin4/venv -name 'mail_util.py' 2>/dev/null | head -n 1)
-        if [ -n "$MAIL_UTIL" ] && ! grep -q "email in \['root'" "$MAIL_UTIL"; then
-            sed -i '/def normalize(/a \    if email in ["root", "admin"]:\n        return email' "$MAIL_UTIL"
-            sed -i '/def validate(/a \    if email in ["root", "admin"]:\n        return email' "$MAIL_UTIL"
-        fi
-        systemctl daemon-reload
-        systemctl restart pgadmin4
-        echo "SUCCESS"
-        ;;
     change_pgadmin_pwd)
         NEW_PWD=$ARG1
         /usr/pgadmin4/venv/bin/python3 -c "
