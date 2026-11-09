@@ -314,7 +314,7 @@ if (!empty($user_raw)) {
     cursor: pointer;
 }
 .btn-action-delete:hover {
-    background: #dc3545 !important;
+    background: #545b62 !important;
     color: #ffffff !important;
 }
 .btn-action-delete i, .btn-action-delete span {
@@ -625,7 +625,7 @@ if (!empty($user_raw)) {
                 </thead>
                 <tbody>
                     <?php if (empty($databases)): ?>
-                        <tr><td colspan="4" style="padding:15px; text-align:center; color:#888;">No PostgreSQL databases found.</td></tr>
+                        <tr><td colspan="4" style="padding:15px; color:#888;">No PostgreSQL databases found.</td></tr>
                     <?php else: ?>
                         <?php foreach ($databases as $idx => $d): ?>
                             <tr>
@@ -690,7 +690,7 @@ if (!empty($user_raw)) {
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>
-                        <tr><td colspan="3" style="padding:15px; text-align:center; color:#888;">No users found.</td></tr>
+                        <tr><td colspan="3" style="padding:15px; color:#888;">No users found.</td></tr>
                     <?php else: ?>
                         <?php foreach ($users as $idx => $u): ?>
                             <tr>
