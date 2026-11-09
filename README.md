@@ -18,19 +18,6 @@ A high-performance, native PostgreSQL & pgAdmin 4 (Web Mode) management module d
 
 ---
 
-## 🔐 Default Credentials
-
-When installing for the first time, pgAdmin 4 Web is initialized with:
-
-| Setting | Default Value | Notes |
-| :--- | :--- | :--- |
-| **Web URL** | `http://<your-server-ip>:5050/` | Or via direct **Open** button in CWP Overview |
-| **Email** | `admin@cwp.com` | Can be changed anytime from the Settings tab |
-| **Password** | `admin1234` | Can be changed anytime from the Settings tab |
-| **Pre-configured Server**| `PostgreSQL (Localhost)` | Pre-linked on port 5432, username `postgres` |
-
----
-
 ## 🚀 Installation
 
 Run on your CWP server as `root`:
