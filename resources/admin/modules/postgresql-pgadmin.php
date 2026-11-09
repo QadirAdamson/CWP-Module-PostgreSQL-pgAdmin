@@ -461,8 +461,8 @@ if (!empty($user_raw)) {
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing PostgreSQL port requires restarting PostgreSQL service. Continue?');">
                                 <input type="hidden" name="action" value="set_pg_port">
                                 <input type="number" name="new_port" min="1" max="65535" value="<?php echo htmlspecialchars($pg_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
-                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new port">
-                                    <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new port">
+                                    Change
                                 </button>
                             </form>
                         </td>
@@ -555,8 +555,8 @@ if (!empty($user_raw)) {
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing pgAdmin port requires restarting pgAdmin service. Continue?');">
                                 <input type="hidden" name="action" value="set_pgadmin_port">
                                 <input type="number" name="new_pgadmin_port" min="1" max="65535" value="<?php echo htmlspecialchars($pgadmin_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
-                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
-                                    <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
+                                    Change
                                 </button>
                             </form>
                         </td>
@@ -567,8 +567,8 @@ if (!empty($user_raw)) {
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="hidden" name="action" value="set_pgadmin_user">
                                 <input type="text" name="new_pgadmin_user" value="<?php echo htmlspecialchars($pgadmin_user_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
-                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 12px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and update username">
-                                    <i class="icon16 icomoon-icon-checkmark" style="color:#ffffff !important;"></i> Change
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and update username">
+                                    Change
                                 </button>
                             </form>
                         </td>
