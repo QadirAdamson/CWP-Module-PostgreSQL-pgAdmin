@@ -127,10 +127,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     }
                 }
                 if ($still_exists || strpos($out, 'SUCCESS') === false || stripos($out, 'ERROR') !== false) {
-                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> silinemedi, pgadmin ile silin.";
+                    $message = "Unable to drop database <b>" . htmlspecialchars($dbname) . "</b>. Active client connections or dependencies exist. Please manage or remove it via pgAdmin.";
                     $msg_type = "danger";
                 } else {
-                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> has been dropped.";
+                    $message = "Database <b>" . htmlspecialchars($dbname) . "</b> has been dropped successfully.";
                     $msg_type = "success";
                 }
             } else {
@@ -217,10 +217,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     }
                 }
                 if ($still_exists || strpos($out, 'SUCCESS') === false || stripos($out, 'ERROR') !== false) {
-                    $message = "User <b>" . htmlspecialchars($username) . "</b> silinemedi, pgadmin ile silin.";
+                    $message = "Unable to remove user <b>" . htmlspecialchars($username) . "</b>. Database objects or privileges depend on this role. Please manage or remove it via pgAdmin.";
                     $msg_type = "danger";
                 } else {
-                    $message = "User <b>" . htmlspecialchars($username) . "</b> removed.";
+                    $message = "User <b>" . htmlspecialchars($username) . "</b> has been removed successfully.";
                     $msg_type = "success";
                 }
             } else {
