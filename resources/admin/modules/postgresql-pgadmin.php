@@ -17,7 +17,7 @@ $message = "";
 $msg_type = "success";
 
 $tab = isset($_GET['tab']) ? trim($_GET['tab']) : 'overview';
-$allowed_tabs = ['overview', 'databases', 'users', 'config'];
+$allowed_tabs = ['overview', 'config'];
 if (!in_array($tab, $allowed_tabs)) {
     $tab = 'overview';
 }
@@ -208,41 +208,6 @@ $pg_status = !empty($info['pg_status']) ? trim($info['pg_status']) : 'inactive';
 $is_active = ($pg_status === 'active');
 $pgadmin_status = !empty($info['pgadmin_status']) ? trim($info['pgadmin_status']) : 'inactive';
 $is_pgadmin_active = ($pgadmin_status === 'active');
-
-// Fetch Databases (only if PostgreSQL is active)
-$databases = [];
-if ($is_active) {
-    $db_raw = shell_exec("$ctl list_dbs 2>/dev/null") ?? '';
-    if (!empty($db_raw)) {
-        foreach (explode("\n", trim($db_raw)) as $line) {
-            if (!empty($line)) {
-                $parts = explode("|", $line);
-                $databases[] = [
-                    'name' => $parts[0] ?? '',
-                    'size' => $parts[1] ?? '',
-                    'encoding' => $parts[2] ?? ''
-                ];
-            }
-        }
-    }
-}
-
-// Fetch Users (only if PostgreSQL is active)
-$users = [];
-if ($is_active) {
-    $user_raw = shell_exec("$ctl list_users 2>/dev/null") ?? '';
-    if (!empty($user_raw)) {
-        foreach (explode("\n", trim($user_raw)) as $line) {
-            if (!empty($line)) {
-                $parts = explode("|", $line);
-                $users[] = [
-                    'username' => $parts[0] ?? '',
-                    'superuser' => $parts[1] ?? 'No'
-                ];
-            }
-        }
-    }
-}
 ?>
 
 <style type="text/css">
@@ -435,16 +400,6 @@ if ($is_active) {
         </a>
     </li>
     <li>
-        <a href="index.php?module=postgresql-pgadmin&tab=databases" class="<?php echo ($tab==='databases') ? 'active-tab' : 'inactive-tab'; ?>">
-            <i class="icon16 icomoon-icon-database"></i> <span>Databases (<?php echo count($databases); ?>)</span>
-        </a>
-    </li>
-    <li>
-        <a href="index.php?module=postgresql-pgadmin&tab=users" class="<?php echo ($tab==='users') ? 'active-tab' : 'inactive-tab'; ?>">
-            <i class="icon16 icomoon-icon-users"></i> <span>Users (<?php echo count($users); ?>)</span>
-        </a>
-    </li>
-    <li>
         <a href="index.php?module=postgresql-pgadmin&tab=config" class="<?php echo ($tab==='config') ? 'active-tab' : 'inactive-tab'; ?>">
             <i class="icon16 icomoon-icon-cogs"></i> <span>Settings</span>
         </a>
@@ -478,20 +433,16 @@ if ($is_active) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Databases:</td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Configuration:</td>
                         <td style="height:46px; vertical-align:middle;">
-                            <a href="index.php?module=postgresql-pgadmin&tab=databases" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all databases">
-                                <b><?php echo count($databases); ?></b> Databases
+                            <a href="index.php?module=postgresql-pgadmin&tab=config" style="color:#2f80ed; font-weight:600; text-decoration:none;" title="Edit postgresql.conf">
+                                <i class="icon16 icomoon-icon-cogs" style="margin-right:4px;"></i> Edit postgresql.conf
                             </a>
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Users:</td>
-                        <td style="height:46px; vertical-align:middle;">
-                            <a href="index.php?module=postgresql-pgadmin&tab=users" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all database users">
-                                <b><?php echo count($users); ?></b> Users
-                            </a>
-                        </td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Data Directory:</td>
+                        <td style="height:46px; vertical-align:middle;"><code><?php echo htmlspecialchars(dirname($pg_conf_path)); ?></code></td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Version:</td>
@@ -601,170 +552,6 @@ if ($is_active) {
 </div>
 <?php endif; ?>
 
-<!-- TAB: DATABASES -->
-<?php if ($tab === 'databases'): ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pdns-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-                <h4 style="margin:0; font-size:16px;">
-                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:5px;"></i> <b>Databases</b>
-                </h4>
-            </div>
-
-            <!-- Create DB inline form -->
-            <form method="POST" style="margin-bottom:20px; display:flex; gap:10px; align-items:center;">
-                <input type="hidden" name="action" value="create_db">
-                <input type="text" name="dbname" class="form-control" placeholder="Enter database name" required pattern="[a-zA-Z0-9_]+" style="max-width:380px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
-                <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
-                    <i class="icon16 icomoon-icon-plus" style="color:#ffffff !important;"></i> Create Database
-                </button>
-            </form>
-
-            <table class="pdns-table sortable-table" id="table-databases">
-                <thead>
-                    <tr>
-                        <th class="sortable-th" onclick="sortTable('table-databases', 0, 'str')">Database Name <span class="sort-icon">⇅</span></th>
-                        <th style="width:140px;" class="sortable-th" onclick="sortTable('table-databases', 1, 'size')">Disk Size <span class="sort-icon">⇅</span></th>
-                        <th style="width:120px;" class="sortable-th" onclick="sortTable('table-databases', 2, 'str')">Encoding <span class="sort-icon">⇅</span></th>
-                        <th style="width:100px;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($databases)): ?>
-                        <tr><td colspan="4" style="padding:15px; color:#888;">No PostgreSQL databases found.</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($databases as $idx => $d): ?>
-                            <tr>
-                                <td>
-                                    <span style="font-weight:bold; color:#17283a; font-size:13px;">
-                                        <?php echo htmlspecialchars($d['name']); ?>
-                                    </span>
-                                </td>
-                                <td><span class="badge" style="background:#6c757d; color:#fff; padding:4px 8px; border-radius:3px; font-size:11px;"><?php echo htmlspecialchars($d['size']); ?></span></td>
-                                <td><code><?php echo htmlspecialchars($d['encoding']); ?></code></td>
-                                <td>
-                                    <?php if ($d['name'] !== 'postgres'): ?>
-                                        <form method="POST" style="margin:0; display:inline;" onsubmit="return confirm('Are you sure you want to permanently drop database <?php echo htmlspecialchars($d['name']); ?>?');">
-                                            <input type="hidden" name="action" value="drop_db">
-                                            <input type="hidden" name="dbname" value="<?php echo htmlspecialchars($d['name']); ?>">
-                                            <button type="submit" class="btn-action-delete" title="Drop Database">
-                                                <i class="icon16 icomoon-icon-remove" style="color:#ffffff !important;"></i>
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <span style="font-size:11px; color:#888; font-weight:bold;">SYSTEM</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
-
-<!-- TAB: USERS -->
-<?php if ($tab === 'users'): ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pdns-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-                <h4 style="margin:0; font-size:16px;">
-                    <i class="icon16 icomoon-icon-users" style="color:#2f80ed; margin-right:5px;"></i> <b>Users</b>
-                </h4>
-            </div>
-
-            <!-- Create User inline form -->
-            <form method="POST" style="margin-bottom:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <input type="hidden" name="action" value="create_user">
-                <input type="text" name="username" class="form-control" placeholder="Enter username" required pattern="[a-zA-Z0-9_]+" style="max-width:240px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
-                <input type="password" name="password" class="form-control" placeholder="Password" required style="max-width:240px; height:34px; font-size:13px; border-radius:4px; border:1px solid #ced4da;">
-                <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:34px; padding:0 18px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
-                    <i class="icon16 icomoon-icon-user-plus" style="color:#ffffff !important;"></i> Add User
-                </button>
-            </form>
-
-            <table class="pdns-table sortable-table" id="table-users">
-                <thead>
-                    <tr>
-                        <th class="sortable-th" onclick="sortTable('table-users', 0, 'str')">Username <span class="sort-icon">⇅</span></th>
-                        <th style="width:140px;" class="sortable-th" onclick="sortTable('table-users', 1, 'str')">Superuser <span class="sort-icon">⇅</span></th>
-                        <th style="width:180px;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($users)): ?>
-                        <tr><td colspan="3" style="padding:15px; color:#888;">No users found.</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($users as $idx => $u): ?>
-                            <tr>
-                                <td>
-                                    <span style="font-weight:bold; color:#17283a; font-size:13px;">
-                                        <?php echo htmlspecialchars($u['username']); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php if ($u['superuser'] === 'Yes'): ?>
-                                        <span class="badge" style="background:#28a745; color:#fff; padding:4px 8px; border-radius:3px; font-size:11px;">YES</span>
-                                    <?php else: ?>
-                                        <span class="badge" style="background:#6c757d; color:#fff; padding:4px 8px; border-radius:3px; font-size:11px;">NO</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div style="display:inline-flex; align-items:center; gap:6px;">
-                                        <button type="button" class="btn btn-primary" onclick="toggleUserPasswordRow('pwd-row-<?php echo $idx; ?>')" style="background:#2f80ed !important; border:none; height:28px; padding:0 10px; font-size:11px; font-weight:bold; color:#ffffff !important; border-radius:4px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Update Password">
-                                            <i class="icon16 icomoon-icon-key" style="color:#ffffff !important;"></i> Update Password
-                                        </button>
-                                        <?php if ($u['username'] !== 'postgres'): ?>
-                                            <form method="POST" style="margin:0; display:inline;" onsubmit="return confirm('Are you sure you want to delete user <?php echo htmlspecialchars($u['username']); ?>?');">
-                                                <input type="hidden" name="action" value="drop_user">
-                                                <input type="hidden" name="username" value="<?php echo htmlspecialchars($u['username']); ?>">
-                                                <button type="submit" class="btn-action-delete" title="Delete User">
-                                                    <i class="icon16 icomoon-icon-remove" style="color:#ffffff !important;"></i>
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Change Password Inline Drawer Row -->
-                            <tr id="pwd-row-<?php echo $idx; ?>" style="display:none; background:#f4f6f9;">
-                                <td colspan="3" style="padding:12px 18px; border-top:1px dashed #dcdfe6;">
-                                    <form method="POST" style="display:flex; align-items:center; gap:10px; margin:0; flex-wrap:wrap;">
-                                        <input type="hidden" name="action" value="change_user_pwd">
-                                        <input type="hidden" name="username" value="<?php echo htmlspecialchars($u['username']); ?>">
-                                        <span style="font-size:12px; font-weight:bold; color:#495057;">
-                                            New password for <u><?php echo htmlspecialchars($u['username']); ?></u>:
-                                        </span>
-                                        <input type="password" name="new_password" class="form-control" placeholder="Enter new password" required style="max-width:240px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px;">
-                                        <button type="submit" class="btn btn-primary" style="background:#2f80ed; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; color:#fff; border-radius:4px; cursor:pointer;">
-                                            Update Password
-                                        </button>
-                                        <button type="button" onclick="toggleUserPasswordRow('pwd-row-<?php echo $idx; ?>')" class="btn btn-default" style="height:30px; padding:0 12px; font-size:12px; border:1px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-            <script type="text/javascript">
-            function toggleUserPasswordRow(rowId) {
-                var el = document.getElementById(rowId);
-                if (el) {
-                    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'table-row' : 'none';
-                }
-            }
-            </script>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
 <!-- TAB: SETTINGS / CONFIG -->
 <?php if ($tab === 'config'): ?>
 <!-- PostgreSQL Configuration File Editor Card -->
