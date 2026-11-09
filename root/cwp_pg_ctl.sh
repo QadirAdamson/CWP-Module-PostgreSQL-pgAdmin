@@ -55,6 +55,36 @@ case $ACTION in
             fi
             systemctl restart postgresql-$CUR_V 2>/dev/null || systemctl restart postgresql
             systemctl restart pgadmin4 2>/dev/null || true
+            PG_PORT=$NEW_PORT
+            TMP_JSON="/tmp/pga_servers_$$.json"
+            CURRENT_USER=$(/usr/pgadmin4/venv/bin/python3 -c "
+import sys
+sys.path.insert(0, '/usr/pgadmin4/web')
+from pgAdmin4 import app
+from pgadmin.model import User
+with app.app_context():
+    u = User.query.first()
+    print(u.email if u else '')
+" 2>/dev/null)
+            if [ -n "$CURRENT_USER" ]; then
+                cat << JSONEOF > "$TMP_JSON"
+{
+    "Servers": {
+        "1": {
+            "Name": "PostgreSQL (Localhost)",
+            "Group": "Servers",
+            "Port": $NEW_PORT,
+            "Username": "postgres",
+            "Host": "127.0.0.1",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}
+JSONEOF
+                /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py load-servers "$TMP_JSON" --user "$CURRENT_USER" --replace 2>/dev/null || true
+                rm -f "$TMP_JSON"
+            fi
             echo "SUCCESS"
         else
             echo "ERROR: Configuration file not found"
@@ -111,30 +141,16 @@ from pgadmin.model import User
 with app.app_context():
     u = User.query.first()
     if u:
-        print(u.username or u.email or 'root')
+        print(u.email or u.username or 'admin@cwp.com')
     else:
-        print('root')
-" 2>/dev/null || echo "root"
+        print('admin@cwp.com')
+" 2>/dev/null || echo "admin@cwp.com"
         ;;
     set_pgadmin_user)
         NEW_USER=$ARG1
         if [ -z "$NEW_USER" ]; then
-            echo "ERROR: Empty username"
+            echo "ERROR: Empty email"
             exit 1
-        fi
-        VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
-        if [ -f "$VAL_UTIL" ]; then
-            /usr/pgadmin4/venv/bin/python3 -c "
-f = '$VAL_UTIL'
-with open(f, 'r') as fp:
-    c = fp.read()
-if 'ALLOW_ANY_USERNAME' not in c:
-    target = 'if not isinstance(email, (str, bytes)):\n        return False'
-    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
-    c = c.replace(target, replacement)
-    with open(f, 'w') as fp:
-        fp.write(c)
-" 2>/dev/null || true
         fi
         /usr/pgadmin4/venv/bin/python3 -c "
 import sys
@@ -153,26 +169,31 @@ with app.app_context():
     else:
         print('NO_USER')
 "
+        # Sync server definition in pgAdmin for the updated user
+        TMP_JSON="/tmp/pga_servers_$$.json"
+        cat << JSONEOF > "$TMP_JSON"
+{
+    "Servers": {
+        "1": {
+            "Name": "PostgreSQL (Localhost)",
+            "Group": "Servers",
+            "Port": $PG_PORT,
+            "Username": "postgres",
+            "Host": "127.0.0.1",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}
+JSONEOF
+        /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py load-servers "$TMP_JSON" --user "$NEW_USER" --replace 2>/dev/null || true
+        rm -f "$TMP_JSON"
         ;;
     get_pgadmin_version)
         rpm -q --queryformat '%{VERSION}' pgadmin4-web 2>/dev/null || echo "4"
         ;;
     change_pgadmin_pwd)
         NEW_PWD=$ARG1
-        VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
-        if [ -f "$VAL_UTIL" ]; then
-            /usr/pgadmin4/venv/bin/python3 -c "
-f = '$VAL_UTIL'
-with open(f, 'r') as fp:
-    c = fp.read()
-if 'ALLOW_ANY_USERNAME' not in c:
-    target = 'if not isinstance(email, (str, bytes)):\n        return False'
-    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
-    c = c.replace(target, replacement)
-    with open(f, 'w') as fp:
-        fp.write(c)
-" 2>/dev/null || true
-        fi
         /usr/pgadmin4/venv/bin/python3 -c "
 import sys
 sys.path.insert(0, '/usr/pgadmin4/web')
@@ -190,6 +211,40 @@ with app.app_context():
     else:
         print('USER_NOT_FOUND')
 "
+        ;;
+    pgadmin_sync_servers)
+        CURRENT_USER=$(/usr/pgadmin4/venv/bin/python3 -c "
+import sys
+sys.path.insert(0, '/usr/pgadmin4/web')
+from pgAdmin4 import app
+from pgadmin.model import User
+with app.app_context():
+    u = User.query.first()
+    print(u.email if u else '')
+" 2>/dev/null)
+        if [ -n "$CURRENT_USER" ]; then
+            TMP_JSON="/tmp/pga_servers_$$.json"
+            cat << JSONEOF > "$TMP_JSON"
+{
+    "Servers": {
+        "1": {
+            "Name": "PostgreSQL (Localhost)",
+            "Group": "Servers",
+            "Port": $PG_PORT,
+            "Username": "postgres",
+            "Host": "127.0.0.1",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}
+JSONEOF
+            /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py load-servers "$TMP_JSON" --user "$CURRENT_USER" --replace 2>/dev/null || true
+            rm -f "$TMP_JSON"
+            echo "SUCCESS"
+        else
+            echo "NO_USER"
+        fi
         ;;
     list_dbs)
         su - postgres -c "psql -p $PG_PORT -t -A -F'|' -c 'SELECT datname, pg_size_pretty(pg_database_size(datname)), pg_encoding_to_char(encoding) FROM pg_database WHERE datistemplate = false ORDER BY datname;'"

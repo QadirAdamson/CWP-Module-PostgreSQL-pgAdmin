@@ -155,14 +155,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($new_pa_user)) {
                 $res = trim(shell_exec("$ctl set_pgadmin_user " . escapeshellarg($new_pa_user) . " 2>&1") ?? '');
                 if (strpos($res, 'SUCCESS') !== false) {
-                    $message = "pgAdmin username updated to <b>" . htmlspecialchars($new_pa_user) . "</b>.";
+                    $message = "pgAdmin email updated to <b>" . htmlspecialchars($new_pa_user) . "</b>.";
                     $msg_type = "success";
                 } else {
-                    $message = "Failed to update pgAdmin username.";
+                    $message = "Failed to update pgAdmin email.";
                     $msg_type = "danger";
                 }
             } else {
-                $message = "Username cannot be empty.";
+                $message = "Email cannot be empty.";
                 $msg_type = "danger";
             }
         } elseif ($action === 'change_user_pwd') {
@@ -561,12 +561,12 @@ if (!empty($user_raw)) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Username:</td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Email:</td>
                         <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
                                 <input type="hidden" name="action" value="set_pgadmin_user">
-                                <input type="text" name="new_pgadmin_user" value="<?php echo htmlspecialchars($pgadmin_user_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
-                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and update username">
+                                <input type="email" name="new_pgadmin_user" value="<?php echo htmlspecialchars($pgadmin_user_raw); ?>" placeholder="admin@cwp.com" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
+                                <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and update email">
                                     Change
                                 </button>
                             </form>

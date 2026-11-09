@@ -130,42 +130,29 @@ if __name__ == '__main__':
     werkzeug.serving.run_simple('0.0.0.0', 5050, app, threaded=True)
 RUNPY
 
-# Allow any username (including 'root', 'admin', and local usernames) in pgAdmin
-VAL_UTIL="/usr/pgadmin4/web/pgadmin/utils/validation_utils.py"
-if [ -f "$VAL_UTIL" ]; then
-    /usr/pgadmin4/venv/bin/python3 -c "
-f = '$VAL_UTIL'
-with open(f, 'r') as fp:
-    c = fp.read()
-if 'ALLOW_ANY_USERNAME' not in c:
-    target = 'if not isinstance(email, (str, bytes)):\n        return False'
-    replacement = 'if not isinstance(email, (str, bytes)):\n        return False\n    # ALLOW_ANY_USERNAME\n    if isinstance(email, str) and (\"@\" not in email or email.endswith(\".local\") or email.endswith(\".localhost\")):\n        return True'
-    c = c.replace(target, replacement)
-    with open(f, 'w') as fp:
-        fp.write(c)
-" 2>/dev/null || true
-fi
-
 # Initialize pgAdmin database non-interactively
-export PGADMIN_SETUP_EMAIL="root"
-export PGADMIN_SETUP_PASSWORD="password"
+export PGADMIN_SETUP_EMAIL="admin@cwp.com"
+export PGADMIN_SETUP_PASSWORD="admin1234"
 /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py setup-db 2>/dev/null || true
 
-# Ensure initial user has clean state
-/usr/pgadmin4/venv/bin/python3 -c "
-import sys
-sys.path.insert(0, '/usr/pgadmin4/web')
-from pgAdmin4 import app
-from pgadmin.model import User, db
-with app.app_context():
-    u = User.query.first()
-    if u:
-        u.email = 'root'
-        u.username = 'root'
-        u.login_attempts = 0
-        u.locked = False
-        db.session.commit()
-" 2>/dev/null || true
+# Pre-configure local PostgreSQL server in pgAdmin
+cat << 'JSON' > /tmp/pga_initial_servers.json
+{
+    "Servers": {
+        "1": {
+            "Name": "PostgreSQL (Localhost)",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "127.0.0.1",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}
+JSON
+/usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py load-servers /tmp/pga_initial_servers.json --user admin@cwp.com --replace 2>/dev/null || true
+rm -f /tmp/pga_initial_servers.json
 
 cat << 'PGSERVICE' > /etc/systemd/system/pgadmin4.service
 [Unit]
