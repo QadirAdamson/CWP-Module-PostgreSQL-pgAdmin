@@ -35,6 +35,24 @@ case $ACTION in
     get_version)
         /usr/pgsql-$CUR_V/bin/postgres -V 2>/dev/null | awk '{print $3}' || su - postgres -c "psql -p $PG_PORT -t -A -c 'SHOW server_version;'" 2>/dev/null
         ;;
+    get_all_info)
+        PG_STAT=$(systemctl is-active postgresql-$CUR_V 2>/dev/null || systemctl is-active postgresql 2>/dev/null || echo "inactive")
+        PA_STAT=$(systemctl is-active pgadmin4 2>/dev/null || echo "inactive")
+        PA_USER=$(python3 -c "import sqlite3; conn = sqlite3.connect('/var/lib/pgadmin/pgadmin4.db'); c = conn.cursor(); c.execute('SELECT email FROM user LIMIT 1'); r = c.fetchone(); print(r[0] if r and r[0] else 'admin@cwp.com')" 2>/dev/null || echo "admin@cwp.com")
+        PA_PORT=$(grep -E '^[[:space:]]*DEFAULT_SERVER_PORT[[:space:]]*=' /etc/pgadmin/config_system.py 2>/dev/null | awk -F'=' '{print $2}' | tr -d ' "')
+        [ -z "$PA_PORT" ] && PA_PORT="5050"
+        PA_VER=$(rpm -q --queryformat '%{VERSION}' pgadmin4-web 2>/dev/null || echo "4")
+        PG_VER=$(/usr/pgsql-$CUR_V/bin/postgres -V 2>/dev/null | awk '{print $3}' || echo "$CUR_V")
+        [ -z "$PG_VER" ] && PG_VER="$CUR_V"
+        echo "pg_version=$PG_VER"
+        echo "pg_port=$PG_PORT"
+        echo "pg_conf_path=$CONF"
+        echo "pg_status=$PG_STAT"
+        echo "pgadmin_port=$PA_PORT"
+        echo "pgadmin_user=$PA_USER"
+        echo "pgadmin_version=$PA_VER"
+        echo "pgadmin_status=$PA_STAT"
+        ;;
     get_port)
         echo "$PG_PORT"
         ;;
@@ -57,15 +75,7 @@ case $ACTION in
             systemctl restart pgadmin4 2>/dev/null || true
             PG_PORT=$NEW_PORT
             TMP_JSON="/tmp/pga_servers_$$.json"
-            CURRENT_USER=$(/usr/pgadmin4/venv/bin/python3 -c "
-import sys
-sys.path.insert(0, '/usr/pgadmin4/web')
-from pgAdmin4 import app
-from pgadmin.model import User
-with app.app_context():
-    u = User.query.first()
-    print(u.email if u else '')
-" 2>/dev/null)
+            CURRENT_USER=$(python3 -c "import sqlite3; conn = sqlite3.connect('/var/lib/pgadmin/pgadmin4.db'); c = conn.cursor(); c.execute('SELECT email FROM user LIMIT 1'); r = c.fetchone(); print(r[0] if r and r[0] else 'admin@cwp.com')" 2>/dev/null || echo "admin@cwp.com")
             if [ -n "$CURRENT_USER" ]; then
                 cat << JSONEOF > "$TMP_JSON"
 {
@@ -133,18 +143,7 @@ JSONEOF
         echo "SUCCESS"
         ;;
     get_pgadmin_user)
-        /usr/pgadmin4/venv/bin/python3 -c "
-import sys
-sys.path.insert(0, '/usr/pgadmin4/web')
-from pgAdmin4 import app
-from pgadmin.model import User
-with app.app_context():
-    u = User.query.first()
-    if u:
-        print(u.email or u.username or 'admin@cwp.com')
-    else:
-        print('admin@cwp.com')
-" 2>/dev/null || echo "admin@cwp.com"
+        python3 -c "import sqlite3; conn = sqlite3.connect('/var/lib/pgadmin/pgadmin4.db'); c = conn.cursor(); c.execute('SELECT email FROM user LIMIT 1'); r = c.fetchone(); print(r[0] if r and r[0] else 'admin@cwp.com')" 2>/dev/null || echo "admin@cwp.com"
         ;;
     set_pgadmin_user)
         NEW_USER=$ARG1
@@ -213,15 +212,7 @@ with app.app_context():
 "
         ;;
     pgadmin_sync_servers)
-        CURRENT_USER=$(/usr/pgadmin4/venv/bin/python3 -c "
-import sys
-sys.path.insert(0, '/usr/pgadmin4/web')
-from pgAdmin4 import app
-from pgadmin.model import User
-with app.app_context():
-    u = User.query.first()
-    print(u.email if u else '')
-" 2>/dev/null)
+        CURRENT_USER=$(python3 -c "import sqlite3; conn = sqlite3.connect('/var/lib/pgadmin/pgadmin4.db'); c = conn.cursor(); c.execute('SELECT email FROM user LIMIT 1'); r = c.fetchone(); print(r[0] if r and r[0] else 'admin@cwp.com')" 2>/dev/null || echo "admin@cwp.com")
         if [ -n "$CURRENT_USER" ]; then
             TMP_JSON="/tmp/pga_servers_$$.json"
             cat << JSONEOF > "$TMP_JSON"

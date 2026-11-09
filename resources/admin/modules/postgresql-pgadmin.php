@@ -23,7 +23,7 @@ if (!in_array($tab, $allowed_tabs)) {
 }
 
 // Handle Service Controls
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (isset($_POST['service_action'])) {
         $svc_act = $_POST['service_action'];
         if ($svc_act === 'start') {
@@ -190,49 +190,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Version
-$pg_version_raw = trim(shell_exec("$ctl get_version 2>/dev/null") ?? '17.11');
-$pg_port_raw = trim(shell_exec("$ctl get_port 2>/dev/null") ?? '5432');
-$pg_conf_path = trim(shell_exec("$ctl get_conf_path 2>/dev/null") ?? '/var/lib/pgsql/17/data/postgresql.conf');
+// Fetch Overview & Status Information in a single fast batch call
+$info_raw = shell_exec("$ctl get_all_info 2>/dev/null") ?? '';
+$info = @parse_ini_string($info_raw) ?: [];
+
+$pg_version_raw = !empty($info['pg_version']) ? trim($info['pg_version']) : '17.11';
+$pg_port_raw = !empty($info['pg_port']) ? trim($info['pg_port']) : '5432';
+$pg_conf_path = !empty($info['pg_conf_path']) ? trim($info['pg_conf_path']) : '/var/lib/pgsql/17/data/postgresql.conf';
 $current_config_content = ($tab === 'config') ? shell_exec("$ctl get_conf 2>/dev/null") ?? '' : '';
 
-$pgadmin_port_raw = trim(shell_exec("$ctl get_pgadmin_port 2>/dev/null") ?? '5050');
-$pgadmin_user_raw = trim(shell_exec("$ctl get_pgadmin_user 2>/dev/null") ?? 'root');
-$pgadmin_version_raw = trim(shell_exec("$ctl get_pgadmin_version 2>/dev/null") ?? '4');
+$pgadmin_port_raw = !empty($info['pgadmin_port']) ? trim($info['pgadmin_port']) : '5050';
+$pgadmin_user_raw = !empty($info['pgadmin_user']) ? trim($info['pgadmin_user']) : 'admin@cwp.com';
+$pgadmin_version_raw = !empty($info['pgadmin_version']) ? trim($info['pgadmin_version']) : '4';
 
 // Fetch Statuses
-$pg_status = trim(shell_exec("$ctl status 2>/dev/null") ?? 'inactive');
+$pg_status = !empty($info['pg_status']) ? trim($info['pg_status']) : 'inactive';
 $is_active = ($pg_status === 'active');
-$pgadmin_status = trim(shell_exec("$ctl pgadmin_status 2>/dev/null") ?? 'inactive');
+$pgadmin_status = !empty($info['pgadmin_status']) ? trim($info['pgadmin_status']) : 'inactive';
 $is_pgadmin_active = ($pgadmin_status === 'active');
 
-// Fetch Databases
-$db_raw = shell_exec("$ctl list_dbs 2>/dev/null") ?? '';
+// Fetch Databases (only if PostgreSQL is active)
 $databases = [];
-if (!empty($db_raw)) {
-    foreach (explode("\n", trim($db_raw)) as $line) {
-        if (!empty($line)) {
-            $parts = explode("|", $line);
-            $databases[] = [
-                'name' => $parts[0] ?? '',
-                'size' => $parts[1] ?? '',
-                'encoding' => $parts[2] ?? ''
-            ];
+if ($is_active) {
+    $db_raw = shell_exec("$ctl list_dbs 2>/dev/null") ?? '';
+    if (!empty($db_raw)) {
+        foreach (explode("\n", trim($db_raw)) as $line) {
+            if (!empty($line)) {
+                $parts = explode("|", $line);
+                $databases[] = [
+                    'name' => $parts[0] ?? '',
+                    'size' => $parts[1] ?? '',
+                    'encoding' => $parts[2] ?? ''
+                ];
+            }
         }
     }
 }
 
-// Fetch Users
-$user_raw = shell_exec("$ctl list_users 2>/dev/null") ?? '';
+// Fetch Users (only if PostgreSQL is active)
 $users = [];
-if (!empty($user_raw)) {
-    foreach (explode("\n", trim($user_raw)) as $line) {
-        if (!empty($line)) {
-            $parts = explode("|", $line);
-            $users[] = [
-                'username' => $parts[0] ?? '',
-                'superuser' => $parts[1] ?? 'No'
-            ];
+if ($is_active) {
+    $user_raw = shell_exec("$ctl list_users 2>/dev/null") ?? '';
+    if (!empty($user_raw)) {
+        foreach (explode("\n", trim($user_raw)) as $line) {
+            if (!empty($line)) {
+                $parts = explode("|", $line);
+                $users[] = [
+                    'username' => $parts[0] ?? '',
+                    'superuser' => $parts[1] ?? 'No'
+                ];
+            }
         }
     }
 }
