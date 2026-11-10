@@ -65,6 +65,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $message = "Please enter a valid password.";
             $msg_type = "danger";
         }
+    } elseif (isset($_POST['change_pg_superuser_pwd'])) {
+        $new_pass = $_POST['new_pg_pwd'] ?? '';
+        if (!empty($new_pass)) {
+            $out = trim(shell_exec("$ctl change_user_pwd postgres " . escapeshellarg($new_pass) . " 2>&1") ?? '');
+            if (strpos($out, 'SUCCESS') !== false) {
+                $message = "PostgreSQL superuser (postgres) password updated successfully.";
+                $msg_type = "success";
+            } else {
+                $message = "Failed to update PostgreSQL superuser password.";
+                $msg_type = "danger";
+            }
+        } else {
+            $message = "Please enter a valid password.";
+            $msg_type = "danger";
+        }
     } elseif (isset($_POST['save_config'])) {
         $new_config = $_POST['config_content'] ?? '';
         if (!empty($new_config)) {
@@ -511,16 +526,23 @@ if ($is_active) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Databases:</td>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Password:</td>
+                        <td style="height:46px; vertical-align:middle;">
+                            <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
+                                <input type="password" name="new_pg_pwd" class="form-control" placeholder="New password" required style="width:170px; height:30px; font-size:12px; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;">
+                                <button type="submit" name="change_pg_superuser_pwd" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new superuser password">
+                                    Change
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">DB / Users:</td>
                         <td style="height:46px; vertical-align:middle;">
                             <a href="index.php?module=postgresql-pgadmin&tab=databases" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all databases">
                                 <b><?php echo count($databases); ?></b> Databases
                             </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Users:</td>
-                        <td style="height:46px; vertical-align:middle;">
+                            <span style="color:#bbb; margin:0 8px;">|</span>
                             <a href="index.php?module=postgresql-pgadmin&tab=users" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all database users">
                                 <b><?php echo count($users); ?></b> Users
                             </a>

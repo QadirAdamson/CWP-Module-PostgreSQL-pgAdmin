@@ -33,7 +33,7 @@ case $ACTION in
         systemctl restart postgresql-$CUR_V 2>/dev/null || systemctl restart postgresql
         ;;
     get_version)
-        /usr/pgsql-$CUR_V/bin/postgres -V 2>/dev/null | awk '{print $3}' || su - postgres -c "psql -p $PG_PORT -t -A -c 'SHOW server_version;'" 2>/dev/null
+        /usr/pgsql-$CUR_V/bin/postgres -V 2>/dev/null | awk '{print $3}' || su -s /bin/bash postgres -c "psql -p $PG_PORT -t -A -c 'SHOW server_version;'" 2>/dev/null
         ;;
     get_all_info)
         PG_STAT=$(systemctl is-active postgresql-$CUR_V 2>/dev/null || systemctl is-active postgresql 2>/dev/null || echo "inactive")
@@ -240,10 +240,10 @@ JSONEOF
         fi
         ;;
     list_dbs)
-        su - postgres -c "psql -p $PG_PORT -t -A -F'|' -c 'SELECT datname, pg_size_pretty(pg_database_size(datname)), pg_encoding_to_char(encoding) FROM pg_database WHERE datistemplate = false ORDER BY datname;'"
+        su -s /bin/bash postgres -c "psql -p $PG_PORT -t -A -F'|' -c 'SELECT datname, pg_size_pretty(pg_database_size(datname)), pg_encoding_to_char(encoding) FROM pg_database WHERE datistemplate = false ORDER BY datname;'"
         ;;
     list_users)
-        su - postgres -c "psql -p $PG_PORT -t -A -F'|' -c \"SELECT usename, CASE WHEN usesuper THEN 'Yes' ELSE 'No' END FROM pg_user ORDER BY usename;\""
+        su -s /bin/bash postgres -c "psql -p $PG_PORT -t -A -F'|' -c \"SELECT usename, CASE WHEN usesuper THEN 'Yes' ELSE 'No' END FROM pg_user ORDER BY usename;\""
         ;;
     create_db)
         DBNAME=$ARG1
@@ -251,7 +251,7 @@ JSONEOF
             echo "ERROR: Invalid database name"
             exit 1
         fi
-        OUT=$(su - postgres -c "createdb -p $PG_PORT \"$DBNAME\"" 2>&1)
+        OUT=$(su -s /bin/bash postgres -c "createdb -p $PG_PORT \"$DBNAME\"" 2>&1)
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
             echo "SUCCESS"
@@ -266,7 +266,7 @@ JSONEOF
             echo "ERROR: Invalid database name"
             exit 1
         fi
-        OUT=$(su - postgres -c "dropdb -p $PG_PORT \"$DBNAME\"" 2>&1)
+        OUT=$(su -s /bin/bash postgres -c "dropdb -p $PG_PORT \"$DBNAME\"" 2>&1)
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
             echo "SUCCESS"
@@ -283,7 +283,7 @@ JSONEOF
             exit 1
         fi
         ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
-        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
+        OUT=$(su -s /bin/bash postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 CREATE USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
 SQLEOF
 )
@@ -303,7 +303,7 @@ SQLEOF
             exit 1
         fi
         ESCAPED_PWD=$(python3 -c "import sys; print(sys.argv[1].replace(\"'\", \"''\"))" "$PASSWORD")
-        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
+        OUT=$(su -s /bin/bash postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 ALTER USER "$USERNAME" WITH PASSWORD '$ESCAPED_PWD';
 SQLEOF
 )
@@ -321,7 +321,7 @@ SQLEOF
             echo "ERROR: Invalid username"
             exit 1
         fi
-        OUT=$(su - postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
+        OUT=$(su -s /bin/bash postgres -c "psql -p $PG_PORT -v ON_ERROR_STOP=1" 2>&1 <<SQLEOF
 DROP USER "$USERNAME";
 SQLEOF
 )

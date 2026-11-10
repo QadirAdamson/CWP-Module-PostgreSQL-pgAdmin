@@ -79,7 +79,7 @@ usermod -s /bin/bash postgres 2>/dev/null || true
 if [ ! -d "/var/lib/pgsql/${PG_VER}/data/base" ]; then
     /usr/pgsql-${PG_VER}/bin/postgresql-${PG_VER}-setup initdb || {
         echo -e "${YELLOW}Retrying initdb directly via postgres user...${NC}"
-        su - postgres -c "/usr/pgsql-${PG_VER}/bin/initdb -D /var/lib/pgsql/${PG_VER}/data"
+        su -s /bin/bash postgres -c "/usr/pgsql-${PG_VER}/bin/initdb -D /var/lib/pgsql/${PG_VER}/data"
     }
 fi
 
@@ -102,7 +102,7 @@ for i in {1..10}; do
 done
 
 # Set default password for postgres user
-su - postgres -c "psql -p 5432 -c \"ALTER USER postgres WITH PASSWORD '2qvUkiz7BgXGvNDx';\"" 2>/dev/null || true
+su -s /bin/bash postgres -c "psql -p 5432 -c \"ALTER USER postgres WITH PASSWORD '2qvUkiz7BgXGvNDx';\"" 2>/dev/null || true
 
 # 3. Install pgAdmin 4 Web (Latest compatible version)
 echo -e "\n${YELLOW}[3/6] Installing latest pgAdmin 4 Web for PostgreSQL ${PG_VER}...${NC}"
