@@ -1,10 +1,6 @@
 <?php
 /**
- * PostgreSQL 17 & pgAdmin 4 Management Module for Control Web Panel (CWP)
- * Styled identically to CWP PowerDNS Manager (?module=powerdns-manager)
- * Author: Qadir Adamson
- * Module Name: postgresql-pgadmin
- * Language: English
+ * Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
  */
 
 if (!isset($include_path)) {
