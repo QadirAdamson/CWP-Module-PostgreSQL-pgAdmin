@@ -439,9 +439,34 @@ if ($is_active) {
     <div class="col-md-12">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:0 2px;">
             <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
-                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
-                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL & pgAdmin
+                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a;">
+                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
                 </h3>
+                <?php if ($is_active): ?>
+                    <span class="badge" style="background:#28a745; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                        <i class="icon16 icomoon-icon-checkmark-circle" style="color:#ffffff !important; margin-right:5px;"></i> Service Running
+                    </span>
+                <?php else: ?>
+                    <span class="badge" style="background:#dc3545; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                        <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important; margin-right:5px;"></i> Service Stopped
+                    </span>
+                <?php endif; ?>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
+                    <?php if ($is_active): ?>
+                        <button type="submit" name="service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart PostgreSQL Server">
+                            <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
+                        </button>
+                        <button type="submit" name="service_action" value="stop" class="btn btn-danger" onclick="return confirm('Stop PostgreSQL server?');" style="background:#dc3545; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
+                            <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
+                        </button>
+                    <?php else: ?>
+                        <button type="submit" name="service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
+                            <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
+                        </button>
+                    <?php endif; ?>
+                </form>
             </div>
         </div>
     </div>
@@ -496,25 +521,6 @@ if ($is_active) {
                             </span>
                         <?php endif; ?>
                     </div>
-                </div>
-
-                <div style="display:flex; gap:6px; align-items:center;">
-                    <?php if ($is_active): ?>
-                        <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
-                            <button type="submit" name="service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Restart PostgreSQL Server">
-                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
-                            </button>
-                            <button type="submit" name="service_action" value="stop" onclick="return confirm('Stop PostgreSQL server?');" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Stop PostgreSQL Server">
-                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <form method="POST" style="margin:0; display:inline-block;">
-                            <button type="submit" name="service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Start PostgreSQL Server">
-                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
-                            </button>
-                        </form>
-                    <?php endif; ?>
                 </div>
             </div>
             <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
