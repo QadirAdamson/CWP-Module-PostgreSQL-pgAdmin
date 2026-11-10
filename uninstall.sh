@@ -53,5 +53,4 @@ systemctl reload cwpsrv 2>/dev/null || true
 
 echo -e "\n${GREEN}==============================================================================${NC}"
 echo -e "${GREEN}  Uninstallation completed successfully!                                      ${NC}"
-echo -e "${GREEN}  (PostgreSQL databases and packages have been preserved for data safety)     ${NC}"
 echo -e "${GREEN}==============================================================================${NC}"
