@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
+# https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
 # ==============================================================================
 
 set -e

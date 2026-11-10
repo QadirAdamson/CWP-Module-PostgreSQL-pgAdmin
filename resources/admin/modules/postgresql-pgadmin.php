@@ -1,6 +1,6 @@
 <?php
 /**
- * Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
+ * https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
  */
 
 if (!isset($include_path)) {

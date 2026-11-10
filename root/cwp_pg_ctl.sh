@@ -1,5 +1,5 @@
 #!/bin/bash
-# Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
+# https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
 
 ACTION=$1
 ARG1=$2
