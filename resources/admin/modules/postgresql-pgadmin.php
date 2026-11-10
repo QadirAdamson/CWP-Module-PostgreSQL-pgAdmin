@@ -439,34 +439,9 @@ if ($is_active) {
     <div class="col-md-12">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:0 2px;">
             <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
-                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a;">
-                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
+                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
+                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL & pgAdmin
                 </h3>
-                <?php if ($is_active): ?>
-                    <span class="badge" style="background:#28a745; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
-                        <i class="icon16 icomoon-icon-checkmark-circle" style="color:#ffffff !important; margin-right:5px;"></i> Service Running
-                    </span>
-                <?php else: ?>
-                    <span class="badge" style="background:#dc3545; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
-                        <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important; margin-right:5px;"></i> Service Stopped
-                    </span>
-                <?php endif; ?>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
-                    <?php if ($is_active): ?>
-                        <button type="submit" name="service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;" title="Restart PostgreSQL Server">
-                            <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
-                        </button>
-                        <button type="submit" name="service_action" value="stop" class="btn btn-danger" onclick="return confirm('Stop PostgreSQL server?');" style="background:#dc3545; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
-                            <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
-                        </button>
-                    <?php else: ?>
-                        <button type="submit" name="service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:7px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">
-                            <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
-                        </button>
-                    <?php endif; ?>
-                </form>
             </div>
         </div>
     </div>
@@ -503,12 +478,44 @@ if ($is_active) {
 
 <?php if ($tab === 'overview'): ?>
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px;">
-                <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
-                    <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
-                </h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; min-height:34px; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <h3 style="margin:0; font-size:20px; font-weight:bold; color:#17283a; display:inline-flex; align-items:center;">
+                        <i class="icon16 icomoon-icon-database" style="color:#2f80ed; margin-right:6px;"></i> PostgreSQL
+                    </h3>
+                    <div>
+                        <?php if ($is_active): ?>
+                            <span class="badge" style="background:#28a745; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                                <i class="icon16 icomoon-icon-checkmark-circle" style="color:#ffffff !important; margin-right:4px;"></i> Active
+                            </span>
+                        <?php else: ?>
+                            <span class="badge" style="background:#dc3545; color:#ffffff; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; display:inline-flex; align-items:center;">
+                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important; margin-right:4px;"></i> Stopped
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <?php if ($is_active): ?>
+                        <form method="POST" style="margin:0; display:inline-flex; gap:6px;">
+                            <button type="submit" name="service_action" value="restart" class="btn btn-warning" style="background:#ffc107; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Restart PostgreSQL Server">
+                                <i class="icon16 icomoon-icon-lightning" style="color:#ffffff !important;"></i> Restart
+                            </button>
+                            <button type="submit" name="service_action" value="stop" onclick="return confirm('Stop PostgreSQL server?');" class="btn btn-danger" style="background:#dc3545; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Stop PostgreSQL Server">
+                                <i class="icon16 icomoon-icon-cancel-circle" style="color:#ffffff !important;"></i> Stop
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <form method="POST" style="margin:0; display:inline-block;">
+                            <button type="submit" name="service_action" value="start" class="btn btn-success" style="background:#28a745; color:#ffffff; border:none; padding:6px 14px; font-weight:bold; font-size:12px; cursor:pointer; border-radius:4px;" title="Start PostgreSQL Server">
+                                <i class="icon16 icomoon-icon-power" style="color:#ffffff !important;"></i> Start
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
             </div>
             <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
             <table class="pdns-table" style="margin:0;">
@@ -518,7 +525,7 @@ if ($is_active) {
                         <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing PostgreSQL port requires restarting PostgreSQL service. Continue?');">
                                 <input type="hidden" name="action" value="set_pg_port">
-                                <input type="number" name="new_port" min="1" max="65535" value="<?php echo htmlspecialchars($pg_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
+                                <input type="number" name="new_port" min="1" max="65535" value="<?php echo htmlspecialchars($pg_port_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
                                 <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new port">
                                     Change
                                 </button>
@@ -533,6 +540,7 @@ if ($is_active) {
                                 <button type="submit" name="change_pg_superuser_pwd" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new superuser password">
                                     Change
                                 </button>
+                                <code>Username: postgres</code>
                             </form>
                         </td>
                     </tr>
@@ -557,7 +565,7 @@ if ($is_active) {
         </div>
     </div>
 
-    <div class="col-md-7">
+    <div class="col-md-6">
         <div class="pdns-card" style="height:100%; display:flex; flex-direction:column;">
             <?php
             $pgadmin_host = !empty($_SERVER['HTTP_HOST']) ? preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']) : '127.0.0.1';
@@ -609,7 +617,7 @@ if ($is_active) {
                         <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirm('Changing pgAdmin port requires restarting pgAdmin service. Continue?');">
                                 <input type="hidden" name="action" value="set_pgadmin_port">
-                                <input type="number" name="new_pgadmin_port" min="1" max="65535" value="<?php echo htmlspecialchars($pgadmin_port_raw); ?>" class="form-control" style="width:100px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
+                                <input type="number" name="new_pgadmin_port" min="1" max="65535" value="<?php echo htmlspecialchars($pgadmin_port_raw); ?>" class="form-control" style="width:170px; height:30px; font-size:12px; font-weight:bold; border:1px solid #ced4da; border-radius:4px; padding:2px 8px;" required>
                                 <button type="submit" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new pgAdmin port">
                                     Change
                                 </button>
