@@ -533,6 +533,10 @@ if ($is_active) {
                         </td>
                     </tr>
                     <tr>
+                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Superuser:</td>
+                        <td style="height:46px; vertical-align:middle;"><code>postgres</code></td>
+                    </tr>
+                    <tr>
                         <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Password:</td>
                         <td style="height:46px; vertical-align:middle;">
                             <form method="POST" style="display:flex; gap:8px; align-items:center; margin:0;">
@@ -540,20 +544,7 @@ if ($is_active) {
                                 <button type="submit" name="change_pg_superuser_pwd" value="1" class="btn btn-primary" style="background:#2f80ed; color:#ffffff; border:none; height:30px; padding:0 14px; font-size:12px; font-weight:bold; border-radius:4px; cursor:pointer;" title="Save and apply new superuser password">
                                     Change
                                 </button>
-                                <code>Username: postgres</code>
                             </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">DB / Users:</td>
-                        <td style="height:46px; vertical-align:middle;">
-                            <a href="index.php?module=postgresql-pgadmin&tab=databases" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all databases">
-                                <b><?php echo count($databases); ?></b> Databases
-                            </a>
-                            <span style="color:#bbb; margin:0 8px;">|</span>
-                            <a href="index.php?module=postgresql-pgadmin&tab=users" style="color:#2f80ed; font-weight:normal; text-decoration:none;" title="View all database users">
-                                <b><?php echo count($users); ?></b> Users
-                            </a>
                         </td>
                     </tr>
                     <tr>
