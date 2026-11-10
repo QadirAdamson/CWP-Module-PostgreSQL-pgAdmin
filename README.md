@@ -4,6 +4,10 @@ PostgreSQL and pgAdmin 4 management module for [Control Web Panel (CWP)](https:/
 
 ---
 
+![Screenshot](screenshot.png)
+
+---
+
 ## Features
 
 - PostgreSQL and pgAdmin 4 installation on CWP
