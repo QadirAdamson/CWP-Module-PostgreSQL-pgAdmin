@@ -1,5 +1,5 @@
 #!/bin/bash
-# PostgreSQL & pgAdmin Management Helper for CWP
+# Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
 
 ACTION=$1
 ARG1=$2

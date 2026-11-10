@@ -1,8 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# PostgreSQL / pgAdmin 4 Module for Control Web Panel (CWP)
-# Author: Qadir Adamson
-# Description: Automated installer for PostgreSQL, pgAdmin 4 Web and CWP Admin Module
+# Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
 # ==============================================================================
 
 set -e

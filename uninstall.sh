@@ -1,7 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# Uninstaller for PostgreSQL / pgAdmin 4 CWP Module
-# Author: Qadir Adamson
+# Github: https://github.com/QadirAdamson/CWP-Module-PostgreSQL-pgAdmin
 # ==============================================================================
 
 set -e
