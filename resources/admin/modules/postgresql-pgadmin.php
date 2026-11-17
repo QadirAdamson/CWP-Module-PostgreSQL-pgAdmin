@@ -524,7 +524,8 @@ if ($is_active) {
                 </div>
             </div>
             <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
-            <table class="pdns-table" style="margin:0;">
+            <div class="table-responsive" style="overflow-x:auto; width:100%;">
+<table class="pdns-table" style="margin:0;">
                 <tbody>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Port:</td>
@@ -559,6 +560,7 @@ if ($is_active) {
                     </tr>
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 
@@ -607,7 +609,8 @@ if ($is_active) {
             </div>
             <hr style="border:0; border-top:1px solid #e4e7ed; margin:0 0 15px 0;">
 
-            <table class="pdns-table" style="margin:0;">
+            <div class="table-responsive" style="overflow-x:auto; width:100%;">
+<table class="pdns-table" style="margin:0;">
                 <tbody>
                     <tr>
                         <td style="font-weight:bold; background:#f9fbfd; width:135px; height:46px; vertical-align:middle;">Port:</td>
@@ -653,6 +656,7 @@ if ($is_active) {
                     </tr>
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 </div>
@@ -676,7 +680,8 @@ if ($is_active) {
                 </button>
             </form>
 
-            <table class="pdns-table sortable-table" id="table-databases">
+            <div class="table-responsive" style="overflow-x:auto; width:100%;">
+<table class="pdns-table sortable-table" id="table-databases">
                 <thead>
                     <tr>
                         <th class="sortable-th" onclick="sortTable('table-databases', 0, 'str')">Database Name <span class="sort-icon">⇅</span></th>
@@ -716,6 +721,7 @@ if ($is_active) {
                     <?php endif; ?>
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 </div>
@@ -740,7 +746,8 @@ if ($is_active) {
                 </button>
             </form>
 
-            <table class="pdns-table sortable-table" id="table-users">
+            <div class="table-responsive" style="overflow-x:auto; width:100%;">
+<table class="pdns-table sortable-table" id="table-users">
                 <thead>
                     <tr>
                         <th class="sortable-th" onclick="sortTable('table-users', 0, 'str')">Username <span class="sort-icon">⇅</span></th>
@@ -805,6 +812,7 @@ if ($is_active) {
                     <?php endif; ?>
                 </tbody>
             </table>
+</div>
             <script type="text/javascript">
             function toggleUserPasswordRow(rowId) {
                 var el = document.getElementById(rowId);
